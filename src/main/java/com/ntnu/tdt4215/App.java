@@ -1,4 +1,4 @@
-package com.ntnu.tdtd4300;
+package com.ntnu.tdt4215;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
