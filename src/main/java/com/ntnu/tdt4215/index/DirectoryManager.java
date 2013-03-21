@@ -1,7 +1,6 @@
 package com.ntnu.tdt4215.index;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Vector;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -94,7 +93,7 @@ public class DirectoryManager {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public Collection<Document> getResults(int nbHits, String querystr) throws IOException, ParseException {
+	public Vector<Document> getResults(int nbHits, String querystr) throws IOException, ParseException {
 		if (currentReader == null) {
 			currentReader = DirectoryReader.open(index);
 		}
