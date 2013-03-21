@@ -2,12 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.ntnu.tdt4300</groupId>
-  <artifactId>com.ntnu.tdtd4300</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <groupId>com.ntnu.tdt4215</groupId>
+  <artifactId>com.ntnu.tdt4215</artifactId>
+  <version>0.0.1</version>
   <packaging>jar</packaging>
 
-  <name>com.ntnu.tdtd4300</name>
+  <name>com.ntnu.tdt4215</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -42,4 +42,21 @@
 			<version>2.4</version>
 		</dependency>
 	</dependencies>
+	<build>
+		<plugins>
+	    <plugin>
+	      <artifactId>maven-assembly-plugin</artifactId>
+	      <configuration>
+	        <descriptorRefs>
+	          <descriptorRef>jar-with-dependencies</descriptorRef>
+	        </descriptorRefs>
+	        <archive>
+	          <manifest>
+	            <mainClass>com.ntnu.tdt4215.App</mainClass>
+	          </manifest>
+	        </archive>
+	      </configuration>
+	    </plugin>
+	  </plugins>
+	</build>
 </project>

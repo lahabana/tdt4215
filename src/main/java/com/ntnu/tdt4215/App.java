@@ -77,7 +77,7 @@ public class App {
 
 	private static void showHelp() {
 		System.out.println("-------TDT 4215 project app usage-----");
-		System.out.println("By: Anne-Sophie Gourlay, David Katuščák and Charly Molter");
+		System.out.println("By: Anne-Sophie Gourlay, David Katuscak and Charly Molter");
 		System.out.println("\tOptions:");
 		System.out.println("\t\t--index: index documents");
 		System.out.println("\t\t--search <query>: search the index for a match query");
