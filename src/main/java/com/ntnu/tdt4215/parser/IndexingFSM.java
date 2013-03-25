@@ -1,6 +1,10 @@
 package com.ntnu.tdt4215.parser;
 
+import java.util.Iterator;
+
 import org.apache.lucene.document.Document;
+
+import com.ntnu.tdt4215.document.IndexableDocument;
 
 /**
  * A finite state machine (iterator) to retrieve documents
@@ -8,7 +12,7 @@ import org.apache.lucene.document.Document;
  * You can easily implement it to parse and add documents one by one
  * when you have a collection
  */
-public interface IndexingFSM {
+public interface IndexingFSM<T extends IndexableDocument> extends Iterator<T> {
 
 	/**
 	 * Whatever you want to do to start the machine
@@ -16,25 +20,14 @@ public interface IndexingFSM {
 	public void initialize();
 	
 	/**
-	 * Checks if all documents in the collection has been treated
-	 * @return
-	 */
-	public boolean isFinished();
-	
-	/**
-	 * Returns the document we point to 
-	 * !!!! it doesn't move the point forward
-	 */
-	public Document getCurrent();
-	
-	/**
-	 * Move the pointer to the next element in the collection
-	 */
-	public void next();
-	
-	/**
 	 * Whatever you need to do to finish the machine
 	 * (close files...)
 	 */
 	public void finish();
+
+	/**
+	 * Does the same as next() but returns a Lucene document instead
+	 * @return
+	 */
+	public Document nextDoc();
 }

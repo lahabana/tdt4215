@@ -8,7 +8,9 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 
+import com.ntnu.tdt4215.document.NLHChapter;
 import com.ntnu.tdt4215.index.DirectoryManager;
+import com.ntnu.tdt4215.parser.BasicFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
 import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
@@ -21,7 +23,7 @@ public class App {
 	static Directory index;
 	static StandardAnalyzer analyzer;
 	static QueryFactory qpf;
-	static DirectoryManager manager;
+	static DirectoryManager<NLHChapter> manager;
 	final static File FILE = new File("bingou");
 	
 	public static void main(String[] args) throws IOException, ParseException {
@@ -44,7 +46,8 @@ public class App {
     	if (args.length == 1 && args[0].equals("--index")) {
     		initIndex();
     		// Create your fsm
-    		//manager.addAll(fsm);
+    		BasicFSM fsm = new BasicFSM();
+    		manager.addAll(fsm);
     		return;
     	}
     	// We want to search the index
@@ -72,7 +75,7 @@ public class App {
 	
 	    qpf = new SimpleQueryFactory();
 	    analyzer = new StandardAnalyzer(Version.LUCENE_40);
-	    manager = new DirectoryManager(index, analyzer, qpf);
+	    manager = new DirectoryManager<NLHChapter>(index, analyzer, qpf);
 	}
 
 	private static void showHelp() {

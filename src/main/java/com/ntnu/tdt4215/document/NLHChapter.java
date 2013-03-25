@@ -4,7 +4,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 
-public class NLHChapter {
+public class NLHChapter implements IndexableDocument {
 	// The Lucene document that is created.
 	protected Document document;
 	
