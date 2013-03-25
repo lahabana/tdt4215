@@ -25,7 +25,7 @@ public class App {
 	static StandardAnalyzer analyzer;
 	static QueryFactory qpf;
 	static DirectoryManager<NLHChapter> manager;
-	final static File FILE = new File("bingou");
+	final static File FILE = new File("index");
 	
 	public static void main(String[] args) throws IOException, ParseException {
 		// We clean the folder containing the index
