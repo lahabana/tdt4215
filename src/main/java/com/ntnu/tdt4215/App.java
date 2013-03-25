@@ -16,6 +16,7 @@ import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Vector;
 
 public class App {
@@ -37,11 +38,6 @@ public class App {
     		}
     		return;
     	}
-    	// We measure the performances
-    	if (args.length == 1 && args[0].equals("--measure")) {
-    		initIndex();
-    		return;
-		}
     	// We want to index new documents
     	if (args.length == 1 && args[0].equals("--index")) {
     		initIndex();
@@ -53,9 +49,17 @@ public class App {
     	// We want to search the index
     	if(args.length == 2 && args[0].equals("--search")) {
     		initIndex();
-    		Vector<Document> docs = manager.getResults(3, args[1]);
-    		for(Document d: docs) {
-    			System.out.println("Match:" + d.get("title"));
+    		File f = new File(args[1]);
+    		if (!f.exists() || !f.canRead()) {
+    			System.err.println("Can't read the file: " + args[1]);
+    			System.exit(1);
+    		}
+    		String contents = FileUtils.readFileToString(f, Charset.forName("UTF-8"));
+
+    		Vector<Document> docs = manager.getResults(3, contents);
+    		System.out.println("Matches:");
+    		for (Document d: docs) {
+    			System.out.println(d.get("title"));
     		}
     		return;
     	} 
@@ -83,7 +87,7 @@ public class App {
 		System.out.println("By: Anne-Sophie Gourlay, David Katuscak and Charly Molter");
 		System.out.println("\tOptions:");
 		System.out.println("\t\t--index: index documents");
-		System.out.println("\t\t--search <query>: search the index for a match query");
+		System.out.println("\t\t--search <file>: search the index for a match to the document passed");
 		System.out.println("\t\t--clean: empty the index");
 		System.out.println("\t\t--measure: compare to the gold standard and output some stats");
 	
