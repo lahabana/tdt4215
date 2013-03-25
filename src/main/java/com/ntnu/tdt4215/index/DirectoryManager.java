@@ -10,6 +10,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
@@ -101,7 +102,7 @@ public class DirectoryManager<T extends IndexableDocument> {
 		}
 	    IndexSearcher searcher = new IndexSearcher(currentReader);	
 	    TopScoreDocCollector collector = TopScoreDocCollector.create(nbHits, true);
-	    searcher.search(queryFactory.parse(querystr), collector);
+	    searcher.search(queryFactory.parse(QueryParser.escape(querystr)), collector);
 	    ScoreDoc[] hits = collector.topDocs().scoreDocs;
 	    Vector<Document> matches = new Vector<Document>();
 	    for(int i=0;i<hits.length;++i) {
