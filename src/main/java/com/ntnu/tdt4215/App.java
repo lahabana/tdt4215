@@ -57,17 +57,17 @@ public class App {
 	 */
 	private static void searchLoop() throws IOException, ParseException {
 		boolean stop = false;
+		java.io.BufferedReader stdin = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
 		while (!stop) {
 			System.out.println("Please insert the filename that contains "+ 
-					"the patient case to quit the program type twice return");
-			java.io.BufferedReader stdin = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
-		    String line = stdin.readLine();
-		    System.out.println(line);
-		    if (line.equals("")) {
-		    	stop = true;
-		    } else {
-		    	searchFile(line);
-		    }
+							   "the patient case to quit the program type twice return");
+			String line = stdin.readLine();
+			if (line == null || line.equals("")) {
+				stop = true;
+			} else {
+				System.out.println("Searching the content of file:"+ line);
+				searchFile(line);
+			}
 		}
 		System.out.println("Quitting");	
 	}
