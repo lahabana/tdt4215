@@ -1,12 +1,14 @@
 args <- commandArgs(trailingOnly = TRUE)
 
 con<-file(args[1], open = "r")
+congs<-file(args[2], open = "r")
 total <- c()
 
-while (length(twoLines <- readLines(con, n = 2, warn = FALSE)) > 0) {
+while (length(resLine <- readLines(con, n = 1, warn = FALSE)) > 0 && length(gsLine <- readLines(congs, n = 1, warn = FALSE))) {
   #creates list from the file
-  result <- (strsplit(twoLines[1], " "))[[1]]
-  gs <- (strsplit(twoLines[2], " "))[[1]]
+  
+  result <- (strsplit(resLine, " "))[[1]]
+  gs <- (strsplit(gsLine, " "))[[1]]
 
   # Get the list of releavant documents retrieved
   relevantDocsRetrieved <- intersect(result,gs)

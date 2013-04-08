@@ -6,19 +6,26 @@ function usage {
   echo "It takes in entry the path to the executable jar, and the path to the directory that contains each patient case and its gold ranking"
   exit
 }
-function evaluate {
-rm res.txt 2> /dev/null
-for i in "$DIR"*.txt; do
-  echo "$i"
-  # Get the results and extract only the chapter numbers
-  java -jar "$JAR" --search "$i" 2> /dev/null | grep -E '^[A-Z][0-9].*$'| sed -E 's/^([A-Z]([0-9]\.?)+).*$/\1/g' | tr '\n' ' ' >> res.txt
-  echo "" >> res.txt
-  # get the gold standard for the same file
-  cat `echo $i | sed s/.txt/.gs/g` | tr '\n' ' ' >> res.txt
-  echo "" >> res.txt
 
-done
-Rscript "evaluate.R" "res.txt"
+function evaluate {
+# We add a sleep to be sure the java program is well started (it's not really necessary)
+# The first grep removes all the text for the user
+# The first sed removes the title of the chapters
+# The tr puts everything on a single line
+# The second tr replaces every 'Matches:' by a line end
+# we then remove the starting space and the first endline
+(sleep 1; find "$DIR"*.txt; echo "") | java -jar "$JAR" --search \
+            | grep -E '(^[A-Z][0-9].*$|^Matches:)' \
+            | sed -E 's/^([A-Z]([0-9]\.?)+).*$/\1/g' \
+            | tr -s '\n' ' ' \
+            | tr -s 'Matches:' '\n' \
+            | grep -E '^[^\n]' \
+            | sed -E 's/^ (.*)$/\1/g' \
+            > res.txt
+
+# launch the R script that computes stats with the gold standard
+Rscript "evaluate.R" "res.txt" "gs.txt"
+
 }
 
 if [ $# -ne 2 ]; then
@@ -34,4 +41,3 @@ echo "creating the new index"
 java -jar "$JAR" --index
 echo "Evaluating each patient case and showing the final report"
 evaluate
-
