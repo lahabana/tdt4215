@@ -11,6 +11,7 @@ import org.apache.lucene.util.Version;
 import com.ntnu.tdt4215.document.NLHChapter;
 import com.ntnu.tdt4215.index.DirectoryManager;
 import com.ntnu.tdt4215.parser.BasicFSM;
+import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
 import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
@@ -78,7 +79,9 @@ public class App {
 	 */
 	private static void indexAll() throws IOException {
 		// Create your fsm
-		BasicFSM fsm = new BasicFSM();
+		//BasicFSM fsm = new BasicFSM();
+		String[] folders = {"Download/G/", "Download/L/", "Download/T/"};
+		NLHWebsiteCrawlerFSM fsm = new NLHWebsiteCrawlerFSM(folders);
 		manager.addAll(fsm);
 	}
 
