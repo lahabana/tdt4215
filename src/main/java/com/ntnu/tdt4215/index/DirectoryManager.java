@@ -69,7 +69,7 @@ public class DirectoryManager<T extends IndexableDocument> {
 	public void addAll(IndexingFSM<T> fsm) throws IOException {
 		fsm.initialize();
 		while(fsm.hasNext()) {
-			Document d = fsm.nextDoc();
+			Document d = fsm.next().getDocument();
 			this.addDoc(d);
 		}
 		fsm.finish();

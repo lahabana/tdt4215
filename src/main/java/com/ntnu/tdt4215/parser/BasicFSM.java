@@ -47,8 +47,4 @@ public class BasicFSM implements IndexingFSM<NLHChapter> {
 		// We don't do this
 	}
 
-	public Document nextDoc() {
-		return iterator.next().getDocument();
-	}
-
 }

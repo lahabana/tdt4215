@@ -24,10 +24,4 @@ public interface IndexingFSM<T extends IndexableDocument> extends Iterator<T> {
 	 * (close files...)
 	 */
 	public void finish();
-
-	/**
-	 * Does the same as next() but returns a Lucene document instead
-	 * @return
-	 */
-	public Document nextDoc();
 }
