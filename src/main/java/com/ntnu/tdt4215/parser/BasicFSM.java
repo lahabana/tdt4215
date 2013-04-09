@@ -3,8 +3,6 @@ package com.ntnu.tdt4215.parser;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import org.apache.lucene.document.Document;
-
 import com.ntnu.tdt4215.document.NLHChapter;
 
 /**
