@@ -33,13 +33,14 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM<NLHChapter> {
 	}
 
 	public NLHChapter next() {
+		// We have finished the current file
 		if (!insideChapterIterator.hasNext()) {
+			// we go to the next file
 			File f = fileIterator.next();
 			try {
-				//FileInputStream fis = new FileInputStream(f);
+				// Parse the document and get an iterator on each chapter
 				currentDocument = Jsoup.parse(f, null);
 				currentDocument.outputSettings().charset("UTF-8");
-				//currentDocument = new Cleaner(Whitelist.simpleText()).clean(currentDocument);
 				System.out.println("Crawling file:" + f.getPath());
 				insideChapterIterator = ChaptersInDocument(currentDocument);
 			} catch (IOException e) {
@@ -67,6 +68,10 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM<NLHChapter> {
 		throw new UnsupportedOperationException();
 	}
 	
+	/**
+	 * Select all the files that will have to be crawled
+	 * @param folders
+	 */
 	protected void loadFilesToCrawl(String[] folders) {
 		files = new ArrayList<File>();
 		for (int i = 0; i < folders.length; i++) {
@@ -120,7 +125,9 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM<NLHChapter> {
 		String title;
 		String content;
 		Element elt = currentDocument.getElementById(selector);
+		// Get the title
 		title = elt.select("h1,h2,h3,h4,h5,h6").first().text();
+		// Get all the text
 		content = elt.text();
 		return new NLHChapter(title, content);
 	}
