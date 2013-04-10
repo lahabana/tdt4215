@@ -10,13 +10,13 @@ import org.apache.lucene.util.Version;
 
 import com.ntnu.tdt4215.document.NLHChapter;
 import com.ntnu.tdt4215.index.DirectoryManager;
-import com.ntnu.tdt4215.parser.BasicFSM;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
 import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.Vector;
 
@@ -27,8 +27,11 @@ public class App {
 	static QueryFactory qpf;
 	static DirectoryManager<NLHChapter> manager;
 	final static File FILE = new File("index");
+	static PrintStream stdout;
 	
 	public static void main(String[] args) throws IOException, ParseException {
+		stdout = new PrintStream(System.out, true, "UTF-8");
+		System.setOut(stdout);
 		// We clean the folder containing the index
     	if (args.length == 1 && args[0].equals("--clean")) {
     		if (FILE.exists() && FILE.isDirectory() && FILE.canWrite()) {

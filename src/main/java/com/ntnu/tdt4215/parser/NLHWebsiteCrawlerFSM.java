@@ -1,5 +1,6 @@
 package com.ntnu.tdt4215.parser;
 
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
@@ -35,7 +36,10 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM<NLHChapter> {
 		if (!insideChapterIterator.hasNext()) {
 			File f = fileIterator.next();
 			try {
-				currentDocument = Jsoup.parse(f, "iso-8859-1");
+				//FileInputStream fis = new FileInputStream(f);
+				currentDocument = Jsoup.parse(f, null);
+				currentDocument.outputSettings().charset("UTF-8");
+				//currentDocument = new Cleaner(Whitelist.simpleText()).clean(currentDocument);
 				System.out.println("Crawling file:" + f.getPath());
 				insideChapterIterator = ChaptersInDocument(currentDocument);
 			} catch (IOException e) {
