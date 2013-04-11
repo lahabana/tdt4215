@@ -1,4 +1,4 @@
-package com.ntnu.tdt4215.index;
+package com.ntnu.tdt4215.index.manager;
 
 import java.io.IOException;
 import java.util.Hashtable;

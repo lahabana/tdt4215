@@ -9,8 +9,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 
-import com.ntnu.tdt4215.index.MultipleIndexManager;
-import com.ntnu.tdt4215.index.NLHOnlyMultipleIndexManager;
+import com.ntnu.tdt4215.index.manager.MultipleIndexManager;
+import com.ntnu.tdt4215.index.manager.NLHOnlyMultipleIndexManager;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
 import com.ntnu.tdt4215.query.SimpleQueryFactory;
