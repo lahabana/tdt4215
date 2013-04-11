@@ -24,7 +24,8 @@ public class NLHWebsiteCrawlerFSMTest {
 		assertTrue(true);
 	}
 	
-	@Test
+	//@Test
+	@Ignore
 	public void ExtractChaptersSelectors() {
 		String[] folders = {"TestChapters/"};
 		NLHWebsiteCrawlerFSM fsm = new NLHWebsiteCrawlerFSM(folders);
