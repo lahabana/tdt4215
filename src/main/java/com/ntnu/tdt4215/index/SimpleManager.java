@@ -25,7 +25,7 @@ import com.ntnu.tdt4215.query.QueryFactory;
  * It just encapsulates readers, writers...
  * @param <T>
  */
-public class DirectoryManager {
+public class SimpleManager implements IndexManager {
 	Directory index;
 	Analyzer analyzer;
 	IndexWriter currentWriter = null;
@@ -38,7 +38,7 @@ public class DirectoryManager {
 	 * @param dir
 	 * @param analyzer2
 	 */
-	public DirectoryManager(Directory dir, Analyzer analyzer2, QueryFactory qpf) {
+	public SimpleManager(Directory dir, Analyzer analyzer2, QueryFactory qpf) {
 	    index = dir;
 	    this.analyzer = analyzer2;
 	    qpf.setAnalyzer(analyzer2);
@@ -51,7 +51,7 @@ public class DirectoryManager {
 	 * @param doc
 	 * @throws IOException
 	 */
-	public void addDoc(Document doc) throws IOException {
+	protected void addDoc(Document doc) throws IOException {
 		if (currentWriter == null) {
 			IndexWriterConfig config = new IndexWriterConfig(VERSION, analyzer);
 		    currentWriter = new IndexWriter(index, config);
@@ -75,26 +75,6 @@ public class DirectoryManager {
 		this.closeWriter();
 	}
 	
-	/**
-	 * Close the writer
-	 * @throws IOException
-	 */
-	public void closeWriter() throws IOException {
-		if (currentWriter != null) {
-			currentWriter.close();
-			currentWriter = null;
-		}
-	}
-	
-	/**
-	 * Returns a vector of documents matching a query 
-	 * the query builder used is the one returned by getQueryParser
-	 * @param nbHits nb of document returned
-	 * @param querystr query string
-	 * @return
-	 * @throws IOException
-	 * @throws ParseException
-	 */
 	public Vector<Document> getResults(int nbHits, String querystr) throws IOException, ParseException {
 		if (currentReader == null) {
 			currentReader = DirectoryReader.open(index);
@@ -110,13 +90,15 @@ public class DirectoryManager {
 	    return matches;
 	}
 
-	/**
-	 * Close the reader (necessary if you add new documents)
-	 * @throws IOException
-	 */
 	public void closeReader() throws IOException {
 		currentReader.close();
 		currentReader = null;
 	}
-		
+	
+	public void closeWriter() throws IOException {
+		if (currentWriter != null) {
+			currentWriter.close();
+			currentWriter = null;
+		}
+	}	
 }
