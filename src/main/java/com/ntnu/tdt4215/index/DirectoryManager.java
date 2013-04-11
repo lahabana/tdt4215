@@ -3,7 +3,7 @@ package com.ntnu.tdt4215.index;
 import java.io.IOException;
 import java.util.Vector;
 
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -28,7 +28,7 @@ import com.ntnu.tdt4215.query.QueryFactory;
  */
 public class DirectoryManager<T extends IndexableDocument> {
 	Directory index;
-	StandardAnalyzer analyzer;
+	Analyzer analyzer;
 	IndexWriter currentWriter = null;
 	IndexReader currentReader = null;
 	QueryFactory queryFactory = null;
@@ -37,12 +37,12 @@ public class DirectoryManager<T extends IndexableDocument> {
 	/**
 	 * Build a manager by Inversion of Control
 	 * @param dir
-	 * @param analyzer
+	 * @param analyzer2
 	 */
-	public DirectoryManager(Directory dir, StandardAnalyzer analyzer, QueryFactory qpf) {
+	public DirectoryManager(Directory dir, Analyzer analyzer2, QueryFactory qpf) {
 	    index = dir;
-	    this.analyzer = analyzer;
-	    qpf.setAnalyzer(analyzer);
+	    this.analyzer = analyzer2;
+	    qpf.setAnalyzer(analyzer2);
 	    qpf.setVersion(VERSION);
 	    queryFactory = qpf;
 	}

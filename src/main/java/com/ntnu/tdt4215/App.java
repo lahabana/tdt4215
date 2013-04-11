@@ -1,7 +1,8 @@
 package com.ntnu.tdt4215;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.no.NorwegianAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
@@ -23,7 +24,7 @@ import java.util.Vector;
 public class App {
 	
 	static Directory index;
-	static StandardAnalyzer analyzer;
+	static Analyzer analyzer;
 	static QueryFactory qpf;
 	static DirectoryManager<NLHChapter> manager;
 	final static File FILE = new File("index");
@@ -117,7 +118,7 @@ public class App {
 		index = new SimpleFSDirectory(FILE);
 	
 	    qpf = new SimpleQueryFactory();
-	    analyzer = new StandardAnalyzer(Version.LUCENE_40);
+	    analyzer = new NorwegianAnalyzer(Version.LUCENE_40);
 	    manager = new DirectoryManager<NLHChapter>(index, analyzer, qpf);
 	}
 	
