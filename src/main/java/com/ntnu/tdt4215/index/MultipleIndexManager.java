@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.store.Directory;
 
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
@@ -17,13 +16,11 @@ import com.ntnu.tdt4215.query.QueryFactory;
  *
  */
 abstract public class MultipleIndexManager implements IndexManager {
-	Hashtable<String, IndexManager> indexes = new Hashtable<String, IndexManager>(); 
-	Directory index;
+	Hashtable<String, IndexManager> indexes = new Hashtable<String, IndexManager>();
 	Analyzer analyzer;
 	QueryFactory queryFactory;
 	
-	public MultipleIndexManager(Directory index2, Analyzer analyzer2, QueryFactory qpf) {
-		index = index2;
+	public MultipleIndexManager(Analyzer analyzer2, QueryFactory qpf) {
 		analyzer = analyzer2;
 		queryFactory = qpf;
 	}
