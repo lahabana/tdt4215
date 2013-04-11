@@ -8,7 +8,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 
-import com.ntnu.tdt4215.document.NLHChapter;
 import com.ntnu.tdt4215.query.QueryFactory;
 
 /**
@@ -20,7 +19,7 @@ public class NLHOnlyMultipleIndexManager extends MultipleIndexManager {
 
 	public NLHOnlyMultipleIndexManager(Directory index2, Analyzer analyzer2, QueryFactory qpf) {
 		super(index2, analyzer2, qpf);
-		DirectoryManager<NLHChapter> idx = new DirectoryManager<NLHChapter>(index, analyzer, queryFactory);
+		DirectoryManager idx = new DirectoryManager(index, analyzer, queryFactory);
 		addIndex("NLHIndex", idx);
 	}
 	

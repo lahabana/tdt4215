@@ -15,7 +15,7 @@ import org.jsoup.select.Elements;
 
 import com.ntnu.tdt4215.document.NLHChapter;
 
-public class NLHWebsiteCrawlerFSM implements IndexingFSM<NLHChapter> {
+public class NLHWebsiteCrawlerFSM implements IndexingFSM {
 
 	protected ArrayList<File> files;
 	protected Iterator<File> fileIterator;

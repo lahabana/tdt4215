@@ -10,7 +10,7 @@ import com.ntnu.tdt4215.document.IndexableDocument;
  * You can easily implement it to parse and add documents one by one
  * when you have a collection
  */
-public interface IndexingFSM<T extends IndexableDocument> extends Iterator<T> {
+public interface IndexingFSM extends Iterator<IndexableDocument> {
 
 	/**
 	 * Whatever you want to do to start the machine

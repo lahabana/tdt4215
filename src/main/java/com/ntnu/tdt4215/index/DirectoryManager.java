@@ -17,7 +17,6 @@ import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
-import com.ntnu.tdt4215.document.IndexableDocument;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
 
@@ -26,7 +25,7 @@ import com.ntnu.tdt4215.query.QueryFactory;
  * It just encapsulates readers, writers...
  * @param <T>
  */
-public class DirectoryManager<T extends IndexableDocument> {
+public class DirectoryManager {
 	Directory index;
 	Analyzer analyzer;
 	IndexWriter currentWriter = null;
@@ -66,7 +65,7 @@ public class DirectoryManager<T extends IndexableDocument> {
 	 * @param fsm
 	 * @throws IOException
 	 */
-	public void addAll(IndexingFSM<T> fsm) throws IOException {
+	public void addAll(IndexingFSM fsm) throws IOException {
 		fsm.initialize();
 		while(fsm.hasNext()) {
 			Document d = fsm.next().getDocument();

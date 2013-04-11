@@ -10,7 +10,7 @@ import com.ntnu.tdt4215.document.NLHChapter;
  * @author charlymolter
  *
  */
-public class BasicFSM implements IndexingFSM<NLHChapter> {
+public class BasicFSM implements IndexingFSM {
 
 	protected ArrayList<NLHChapter> elts;
 	protected Iterator<NLHChapter> iterator;

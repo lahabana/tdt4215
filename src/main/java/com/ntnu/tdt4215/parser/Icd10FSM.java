@@ -12,7 +12,7 @@ import com.ntnu.tdt4215.document.Icd10Class;
  * @author charlymolter
  *
  */
-public class Icd10FSM extends OwlFSM<Icd10Class>{
+public class Icd10FSM extends OwlFSM {
 	/**
 	 * Our selector to select only the classes
 	 */

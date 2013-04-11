@@ -8,7 +8,6 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Selector;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.FileManager;
-import com.ntnu.tdt4215.document.OwlClass;
 
 /**
  * An abstract class to make an FSM on a owl file
@@ -18,7 +17,7 @@ import com.ntnu.tdt4215.document.OwlClass;
  *
  * @param <T>
  */
-public abstract class OwlFSM<T extends OwlClass> implements IndexingFSM<T> {
+public abstract class OwlFSM implements IndexingFSM {
 	OntModel model;
 	private String filename;
 	protected StmtIterator iter;
