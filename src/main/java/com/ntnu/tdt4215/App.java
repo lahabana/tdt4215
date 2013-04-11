@@ -9,8 +9,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 
-import com.ntnu.tdt4215.document.NLHChapter;
-import com.ntnu.tdt4215.index.DirectoryManager;
+import com.ntnu.tdt4215.index.MultipleIndexManager;
+import com.ntnu.tdt4215.index.NLHOnlyMultipleIndexManager;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
 import com.ntnu.tdt4215.query.SimpleQueryFactory;
@@ -26,7 +26,7 @@ public class App {
 	static Directory index;
 	static Analyzer analyzer;
 	static QueryFactory qpf;
-	static DirectoryManager<NLHChapter> manager;
+	static MultipleIndexManager manager;
 	final static File FILE = new File("index");
 	static PrintStream stdout;
 	
@@ -86,7 +86,7 @@ public class App {
 		//BasicFSM fsm = new BasicFSM();
 		String[] folders = {"Download/G/", "Download/L/", "Download/T/"};
 		NLHWebsiteCrawlerFSM fsm = new NLHWebsiteCrawlerFSM(folders);
-		manager.addAll(fsm);
+		manager.addAll("NLHIndex", fsm);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class App {
 	
 	    qpf = new SimpleQueryFactory();
 	    analyzer = new NorwegianAnalyzer(Version.LUCENE_40);
-	    manager = new DirectoryManager<NLHChapter>(index, analyzer, qpf);
+	    manager = new NLHOnlyMultipleIndexManager(index, analyzer, qpf);
 	}
 	
 	/**
