@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
 
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
@@ -61,5 +63,13 @@ abstract public class MultipleIndexManager implements IndexManager {
 		for (String key : indexes.keySet()) {
 			indexes.get(key).closeReader();
 		}
+	}
+	
+	public IndexReader getReader() throws IOException {
+		throw new UnsupportedOperationException();
+	}
+
+	public IndexWriter getWriter() throws IOException {
+		throw new UnsupportedOperationException();
 	}
 }

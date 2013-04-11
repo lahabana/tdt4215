@@ -5,7 +5,6 @@ import java.util.Vector;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -25,10 +24,7 @@ public class SimpleManager extends LuceneAbstractManager {
 	}
 
 	public Vector<Document> getResults(int nbHits, String querystr) throws IOException, ParseException {
-		if (currentReader == null) {
-			currentReader = DirectoryReader.open(index);
-		}
-	    IndexSearcher searcher = new IndexSearcher(currentReader);	
+	    IndexSearcher searcher = new IndexSearcher(getReader());	
 	    TopScoreDocCollector collector = TopScoreDocCollector.create(nbHits, true);
 	    searcher.search(queryFactory.parse(QueryParser.escape(querystr)), collector);
 	    ScoreDoc[] hits = collector.topDocs().scoreDocs;

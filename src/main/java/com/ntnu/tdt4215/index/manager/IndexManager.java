@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Vector;
 
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import com.ntnu.tdt4215.parser.IndexingFSM;
@@ -29,6 +31,19 @@ public interface IndexManager {
 	 * @throws ParseException
 	 */
 	public Vector<Document> getResults(int nbHits, String querystr) throws IOException, ParseException;
+	
+	/**
+	 * Returns the index reader (this is especially useful for singletons)
+	 * @return
+	 * @throws IOException 
+	 */
+	IndexReader getReader() throws IOException;
+
+	/**
+	 * Returns the index writer (this is especially useful for singletons)
+	 * @return
+	 */
+	IndexWriter getWriter() throws IOException;
 	
 	/**
 	 * Close the writer

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -17,8 +18,8 @@ abstract public class LuceneAbstractManager implements IndexManager {
 
 	Directory index;
 	Analyzer analyzer;
-	IndexWriter currentWriter = null;
-	IndexReader currentReader = null;
+	private IndexWriter currentWriter = null;
+	private IndexReader currentReader = null;
 	QueryFactory queryFactory = null;
 	private static final Version VERSION = Version.LUCENE_40;
 	
@@ -41,11 +42,7 @@ abstract public class LuceneAbstractManager implements IndexManager {
 	 * @throws IOException
 	 */
 	protected void addDoc(Document doc) throws IOException {
-		if (currentWriter == null) {
-			IndexWriterConfig config = new IndexWriterConfig(VERSION, analyzer);
-		    currentWriter = new IndexWriter(index, config);
-		}
-		currentWriter.addDocument(doc);
+		getWriter().addDocument(doc);
 	}
 	
 	/**
@@ -62,6 +59,21 @@ abstract public class LuceneAbstractManager implements IndexManager {
 		}
 		fsm.finish();
 		this.closeWriter();
+	}
+	
+	public IndexReader getReader() throws IOException {
+		if (currentReader == null) {
+			currentReader = DirectoryReader.open(index);
+		}
+		return currentReader;
+	}
+
+	public IndexWriter getWriter() throws IOException {
+		if (currentWriter == null) {
+			IndexWriterConfig config = new IndexWriterConfig(VERSION, analyzer);
+		    currentWriter = new IndexWriter(index, config);
+		}
+		return currentWriter;
 	}
 
 	public void closeReader() throws IOException {

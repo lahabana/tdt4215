@@ -6,7 +6,6 @@ import java.util.Vector;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -27,10 +26,7 @@ public class MergingManager extends LuceneAbstractManager {
 
 	public Vector<Document> getResults(int nbHits, String queryStr)
 			throws IOException, ParseException {
-		if (currentReader == null) {
-			currentReader = DirectoryReader.open(index);
-		}
-	    IndexSearcher searcher = new IndexSearcher(currentReader);	
+	    IndexSearcher searcher = new IndexSearcher(getReader());	
 	    ArrayList<String> queries = mergePolicy.splitQuery(queryStr);
 	    for (String query : queries) {
 	    	TopScoreDocCollector collector = TopScoreDocCollector.create(nbHits, true);
