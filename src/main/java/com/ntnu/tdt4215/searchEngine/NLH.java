@@ -24,19 +24,15 @@ import com.ntnu.tdt4215.query.SimpleQueryFactory;
  *
  */
 public class NLH extends SearchEngine {
-
-	Directory dir;
-	Analyzer analyzer;
-	QueryFactory queryFactory;
 	private static final Version VERSION = Version.LUCENE_40;
 	private static final File FILE = new File("NLHindex");
 	private static final String[] FOLDERS = {"Download/G/", "Download/L/", "Download/T/"};
 
 	public NLH() throws IOException {
 		super();
-		analyzer = new NorwegianAnalyzer(VERSION);
-		dir = new SimpleFSDirectory(FILE);
-		queryFactory = new SimpleQueryFactory();
+		Analyzer analyzer = new NorwegianAnalyzer(VERSION);
+		Directory dir = new SimpleFSDirectory(FILE);
+		QueryFactory queryFactory = new SimpleQueryFactory();
 		queryFactory.setAnalyzer(analyzer);
 	    queryFactory.setVersion(VERSION);
 		SimpleManager idx = new SimpleManager(dir, analyzer, queryFactory);
