@@ -11,6 +11,11 @@ public class SimpleQueryFactory implements QueryFactory {
 	Analyzer analyzer = null;
 	Version version = null;
 	
+	public SimpleQueryFactory(Analyzer analyzer, Version version) {
+		setAnalyzer(analyzer);
+		setVersion(version);
+	}
+
 	public Query parse(String querystr) throws ParseException {
 		QueryParser qp = new QueryParser(version, "content", analyzer);
 		return qp.parse(querystr);

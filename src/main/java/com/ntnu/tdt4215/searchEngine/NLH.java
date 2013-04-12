@@ -32,9 +32,7 @@ public class NLH extends SearchEngine {
 		super();
 		Analyzer analyzer = new NorwegianAnalyzer(VERSION);
 		Directory dir = new SimpleFSDirectory(FILE);
-		QueryFactory queryFactory = new SimpleQueryFactory();
-		queryFactory.setAnalyzer(analyzer);
-	    queryFactory.setVersion(VERSION);
+		QueryFactory queryFactory = new SimpleQueryFactory(analyzer, VERSION);
 		SimpleManager idx = new SimpleManager(dir, queryFactory);
 		addIndex("NLHIndex", idx);
 	}
