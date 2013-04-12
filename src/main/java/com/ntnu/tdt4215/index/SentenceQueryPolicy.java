@@ -22,7 +22,10 @@ public class SentenceQueryPolicy implements MultipleQueryPolicy {
 		String[] sentences = query.split("[\\.\\!\\?]");
 		ArrayList<String> arr = new ArrayList<String>();
 		for (int i = 0; i < sentences.length; i++) {
-			arr.add(sentences[i]);
+			sentences[i] = sentences[i].trim();
+			if (sentences[i].length() > 0) {
+				arr.add(sentences[i]);
+			}
 		}
 		return arr;
 	}
