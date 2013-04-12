@@ -53,6 +53,8 @@ public class SentenceQueryPolicy implements MultipleQueryPolicy {
 			String id = pq.remove().getId();
 			res.add(docs.get(id));
 		}
+		results = new Hashtable<String, Integer>();
+		docs = new Hashtable<String, Document>();
 		return res;
 	}
 
