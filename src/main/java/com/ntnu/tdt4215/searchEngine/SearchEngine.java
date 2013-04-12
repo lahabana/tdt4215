@@ -8,7 +8,6 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import com.ntnu.tdt4215.index.manager.IndexManager;
-import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 
 /**
@@ -26,7 +25,7 @@ abstract public class SearchEngine {
 	 * @param key
 	 * @param idx
 	 */
-	public void addIndex(String key, SimpleManager idx) {
+	public void addIndex(String key, IndexManager idx) {
 		indexes.put(key, idx);
 	}
 
