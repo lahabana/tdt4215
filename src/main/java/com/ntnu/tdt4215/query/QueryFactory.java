@@ -9,7 +9,7 @@ import org.apache.lucene.util.Version;
  * A factory to create queries (used to search for example)
  */
 public interface QueryFactory {
-
+	public static Version VERSION = Version.LUCENE_40;
 	/**
 	 * Create a new querybuilder and return the query parsed by this parser
 	 * @param querystr
@@ -29,11 +29,5 @@ public interface QueryFactory {
 	 * @return
 	 */
 	public Analyzer getAnalyzer();
-	
-	/**
-	 * Set the lucene version
-	 * @param version
-	 */
-	public void setVersion(Version version);
 
 }
