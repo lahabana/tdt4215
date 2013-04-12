@@ -64,4 +64,8 @@ abstract public class MultipleIndexManager implements IndexManager {
 	public IndexWriter getWriter() throws IOException {
 		throw new UnsupportedOperationException();
 	}
+	
+	public void addAll(IndexingFSM fsm) throws IOException {
+		throw new UnsupportedOperationException();
+	}
 }

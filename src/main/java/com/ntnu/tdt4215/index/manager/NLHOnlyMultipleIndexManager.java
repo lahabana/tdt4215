@@ -28,6 +28,7 @@ public class NLHOnlyMultipleIndexManager extends MultipleIndexManager {
 		return getIndex("NLHIndex").getResults(maxElt, queryStr);
 	}
 
+	@Override
 	public void addAll(IndexingFSM fsm) throws IOException {
 		getIndex("NLHIndex").addAll(fsm);
 	}

@@ -15,7 +15,6 @@ public interface IndexManager {
 	
 	/**
 	 * Add all the documents in the finite state machine and closes the writer.
-	 * @param <T>
 	 * @param fsm
 	 * @throws IOException
 	 */
