@@ -1,4 +1,4 @@
-package com.ntnu.tdt4215.index.manager;
+package com.ntnu.tdt4215.searchEngine;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.lucene.util.Version;
 
-import com.ntnu.tdt4215.parser.IndexingFSM;
+import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
 import com.ntnu.tdt4215.query.SimpleQueryFactory;
@@ -23,7 +23,7 @@ import com.ntnu.tdt4215.query.SimpleQueryFactory;
  * @author charlymolter
  *
  */
-public class NLHOnlyMultipleIndexManager extends MultipleIndexManager {
+public class NLH extends SearchEngine {
 
 	Directory dir;
 	Analyzer analyzer;
@@ -32,7 +32,7 @@ public class NLHOnlyMultipleIndexManager extends MultipleIndexManager {
 	private static final File FILE = new File("NLHindex");
 	private static final String[] FOLDERS = {"Download/G/", "Download/L/", "Download/T/"};
 
-	public NLHOnlyMultipleIndexManager() throws IOException {
+	public NLH() throws IOException {
 		super();
 		analyzer = new NorwegianAnalyzer(VERSION);
 		dir = new SimpleFSDirectory(FILE);
@@ -45,11 +45,6 @@ public class NLHOnlyMultipleIndexManager extends MultipleIndexManager {
 	
 	public Vector<Document> getResults(int maxElt, String queryStr) throws IOException, ParseException {
 		return getIndex("NLHIndex").getResults(maxElt, queryStr);
-	}
-
-	@Override
-	public void addAll(IndexingFSM fsm) throws IOException {
-		getIndex("NLHIndex").addAll(fsm);
 	}
 
 	@Override

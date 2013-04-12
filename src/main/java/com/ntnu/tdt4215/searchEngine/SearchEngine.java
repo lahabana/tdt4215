@@ -1,12 +1,14 @@
-package com.ntnu.tdt4215.index.manager;
+package com.ntnu.tdt4215.searchEngine;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.Vector;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.queryparser.classic.ParseException;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-
+import com.ntnu.tdt4215.index.manager.IndexManager;
+import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 
 /**
@@ -16,7 +18,7 @@ import com.ntnu.tdt4215.parser.IndexingFSM;
  * @author charlymolter
  *
  */
-abstract public class MultipleIndexManager implements IndexManager {
+abstract public class SearchEngine {
 	Hashtable<String, IndexManager> indexes = new Hashtable<String, IndexManager>();
 	
 	/**
@@ -36,6 +38,28 @@ abstract public class MultipleIndexManager implements IndexManager {
 	public IndexManager getIndex(String key) {
 		return indexes.get(key);
 	}
+	
+	/**
+	 * Deletes all the already existing indexes
+	 * @throws IOException
+	 */
+	abstract public void clean() throws IOException;
+	
+	/**
+	 * Returns the results of the queryString
+	 * @param maxResults
+	 * @param queryString
+	 * @return
+	 * @throws ParseException 
+	 * @throws IOException 
+	 */
+	abstract public Vector<Document> getResults(int maxResults, String queryString) throws IOException, ParseException;
+
+	/**
+	 * Index all the documents to the index
+	 * @throws IOException
+	 */
+	abstract public void indexAll() throws IOException;
 
 	/**
 	 * Add all the elements in the fsm to the index identified by "key"
@@ -50,18 +74,6 @@ abstract public class MultipleIndexManager implements IndexManager {
 		}
 		dm.addAll(fsm);
 	}
-
-	/**
-	 * Deletes all the already existing indexes
-	 * @throws IOException
-	 */
-	abstract public void clean() throws IOException;
-
-	/**
-	 * Index all the documents to the index
-	 * @throws IOException
-	 */
-	abstract public void indexAll() throws IOException;
 	
 	public void closeWriter() throws IOException {
 		for (String key : indexes.keySet()) {
@@ -73,17 +85,5 @@ abstract public class MultipleIndexManager implements IndexManager {
 		for (String key : indexes.keySet()) {
 			indexes.get(key).closeReader();
 		}
-	}
-	
-	public IndexReader getReader() throws IOException {
-		throw new UnsupportedOperationException();
-	}
-
-	public IndexWriter getWriter() throws IOException {
-		throw new UnsupportedOperationException();
-	}
-	
-	public void addAll(IndexingFSM fsm) throws IOException {
-		throw new UnsupportedOperationException();
 	}
 }

@@ -4,8 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 
-import com.ntnu.tdt4215.index.manager.MultipleIndexManager;
-import com.ntnu.tdt4215.index.manager.NLHOnlyMultipleIndexManager;
+import com.ntnu.tdt4215.searchEngine.SearchEngine;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,13 +14,13 @@ import java.util.Vector;
 
 public class App {
 	
-	static MultipleIndexManager manager;
+	static SearchEngine manager;
 	static PrintStream stdout;
 	
 	public static void main(String[] args) throws ParseException, IOException {
 		stdout = new PrintStream(System.out, true, "UTF-8");
 		System.setOut(stdout);
-		manager = new NLHOnlyMultipleIndexManager();
+		manager = new com.ntnu.tdt4215.searchEngine.NLH();
 		// We clean the folder containing the index
     	if (args.length == 1 && args[0].equals("--clean")) {
 
