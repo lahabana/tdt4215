@@ -18,7 +18,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
 public class Icd10Class implements OwlClass {
 
 	String label = "";
-	String code = "";
+	String id = "";
 	Document document = new Document();
 	static String ns = "http://research.idi.ntnu.no/hilab/ehr/ontologies/icd10no.owl#";
 	static Property code_compacted = ResourceFactory.createProperty(ns + "code_compacted");
@@ -31,10 +31,10 @@ public class Icd10Class implements OwlClass {
 	    }
 	    Statement codeStmt = subject.getProperty(code_compacted);
 	    if (codeStmt != null) {
-	    	code = codeStmt.getString();
+	    	id = codeStmt.getString();
 	    }
 	    setLabel();
-	    setCode();
+	    setId();
 	} 
 		
 	public Document getDocument() {
@@ -49,16 +49,16 @@ public class Icd10Class implements OwlClass {
 		document.add(new Field("label", label, ft));
 	}
 	
-	protected void setCode() {
+	protected void setId() {
 		FieldType ft = new FieldType();
 		ft.setStored(true);
 		ft.setTokenized(false);
 		ft.setIndexed(true);
-		document.add(new Field("code", code, ft));
+		document.add(new Field("id", id, ft));
 	}
 
 	public String toString() {
-		return "{code:\"" + code + "\", label:\"" + label + "\"}";
+		return "{id:\"" + id + "\", label:\"" + label + "\"}";
 		
 	}
 }
