@@ -35,7 +35,7 @@ public class NLH extends SearchEngine {
 		QueryFactory queryFactory = new SimpleQueryFactory();
 		queryFactory.setAnalyzer(analyzer);
 	    queryFactory.setVersion(VERSION);
-		SimpleManager idx = new SimpleManager(dir, analyzer, queryFactory);
+		SimpleManager idx = new SimpleManager(dir, queryFactory);
 		addIndex("NLHIndex", idx);
 	}
 	

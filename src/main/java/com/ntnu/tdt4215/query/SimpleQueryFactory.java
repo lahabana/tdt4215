@@ -23,5 +23,9 @@ public class SimpleQueryFactory implements QueryFactory {
 	public void setVersion(Version version) {
 		this.version = version;
 	}
+
+	public Analyzer getAnalyzer() {
+		return analyzer;
+	}
 	
 }

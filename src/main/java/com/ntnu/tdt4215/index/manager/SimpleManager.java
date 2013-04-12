@@ -3,7 +3,6 @@ package com.ntnu.tdt4215.index.manager;
 import java.io.IOException;
 import java.util.Vector;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -19,8 +18,8 @@ import com.ntnu.tdt4215.query.QueryFactory;
  * @param <T>
  */
 public class SimpleManager extends LuceneAbstractManager {
-	public SimpleManager(Directory dir, Analyzer analyzer2, QueryFactory qpf) {
-		super(dir, analyzer2, qpf);
+	public SimpleManager(Directory dir, QueryFactory qpf) {
+		super(dir, qpf);
 	}
 
 	public Vector<Document> getResults(int nbHits, String querystr) throws IOException, ParseException {

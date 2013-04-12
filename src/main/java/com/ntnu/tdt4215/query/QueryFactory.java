@@ -25,6 +25,12 @@ public interface QueryFactory {
 	public void setAnalyzer(Analyzer analyzer);
 	
 	/**
+	 * Get the analyzer for the queryBuilder
+	 * @return
+	 */
+	public Analyzer getAnalyzer();
+	
+	/**
 	 * Set the lucene version
 	 * @param version
 	 */

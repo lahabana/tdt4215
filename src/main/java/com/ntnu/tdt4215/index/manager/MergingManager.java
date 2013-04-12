@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -19,8 +18,8 @@ import com.ntnu.tdt4215.query.QueryFactory;
 public class MergingManager extends LuceneAbstractManager {
 
 	MultipleQueryPolicy mergePolicy;
-	public MergingManager(Directory dir, Analyzer analyzer2, QueryFactory qpf, MultipleQueryPolicy mergePol) {
-		super(dir, analyzer2, qpf);
+	public MergingManager(Directory dir, QueryFactory qpf, MultipleQueryPolicy mergePol) {
+		super(dir, qpf);
 		mergePolicy = mergePol;
 	}
 

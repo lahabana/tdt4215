@@ -2,7 +2,6 @@ package com.ntnu.tdt4215.index.manager;
 
 import java.io.IOException;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -17,7 +16,6 @@ import com.ntnu.tdt4215.query.QueryFactory;
 abstract public class LuceneAbstractManager implements IndexManager {
 
 	Directory index;
-	Analyzer analyzer;
 	private IndexWriter currentWriter = null;
 	private IndexReader currentReader = null;
 	QueryFactory queryFactory = null;
@@ -28,9 +26,8 @@ abstract public class LuceneAbstractManager implements IndexManager {
 	 * @param dir
 	 * @param analyzer2
 	 */
-	public LuceneAbstractManager(Directory dir, Analyzer analyzer2, QueryFactory qpf) {
+	public LuceneAbstractManager(Directory dir, QueryFactory qpf) {
 	    index = dir;
-	    this.analyzer = analyzer2;
 	    queryFactory = qpf;
 	}
 	
@@ -68,7 +65,7 @@ abstract public class LuceneAbstractManager implements IndexManager {
 
 	public IndexWriter getWriter() throws IOException {
 		if (currentWriter == null) {
-			IndexWriterConfig config = new IndexWriterConfig(VERSION, analyzer);
+			IndexWriterConfig config = new IndexWriterConfig(VERSION, queryFactory.getAnalyzer());
 		    currentWriter = new IndexWriter(index, config);
 		}
 		return currentWriter;
