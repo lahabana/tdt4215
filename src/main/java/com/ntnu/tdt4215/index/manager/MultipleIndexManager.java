@@ -3,12 +3,11 @@ package com.ntnu.tdt4215.index.manager;
 import java.io.IOException;
 import java.util.Hashtable;
 
-import org.apache.lucene.analysis.Analyzer;
+
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 
 import com.ntnu.tdt4215.parser.IndexingFSM;
-import com.ntnu.tdt4215.query.QueryFactory;
 
 /**
  * A class to encapsulate multiple Directory managers
@@ -19,13 +18,6 @@ import com.ntnu.tdt4215.query.QueryFactory;
  */
 abstract public class MultipleIndexManager implements IndexManager {
 	Hashtable<String, IndexManager> indexes = new Hashtable<String, IndexManager>();
-	Analyzer analyzer;
-	QueryFactory queryFactory;
-	
-	public MultipleIndexManager(Analyzer analyzer2, QueryFactory qpf) {
-		analyzer = analyzer2;
-		queryFactory = qpf;
-	}
 	
 	/**
 	 * Add an new index to the directory manager

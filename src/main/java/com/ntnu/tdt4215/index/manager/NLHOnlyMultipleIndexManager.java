@@ -19,8 +19,8 @@ import com.ntnu.tdt4215.query.QueryFactory;
 public class NLHOnlyMultipleIndexManager extends MultipleIndexManager {
 
 	public NLHOnlyMultipleIndexManager(Directory index2, Analyzer analyzer2, QueryFactory qpf) {
-		super(analyzer2, qpf);
-		SimpleManager idx = new SimpleManager(index2, analyzer, queryFactory);
+		super();
+		SimpleManager idx = new SimpleManager(index2, analyzer2, qpf);
 		addIndex("NLHIndex", idx);
 	}
 	
