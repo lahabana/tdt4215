@@ -36,7 +36,7 @@ abstract public class LuceneAbstractManager implements IndexManager {
 	 * @param doc
 	 * @throws IOException
 	 */
-	protected void addDoc(Document doc) throws IOException {
+	public void addDoc(Document doc) throws IOException {
 		getWriter().addDocument(doc);
 	}
 	

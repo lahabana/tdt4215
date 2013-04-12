@@ -12,6 +12,12 @@ import com.ntnu.tdt4215.parser.IndexingFSM;
 
 public interface IndexManager {
 	
+	/**
+	 * Add one document to the document (opens a writer if none are already open)
+	 * @param doc
+	 * @throws IOException
+	 */
+	public void addDoc(Document doc) throws IOException;
 	
 	/**
 	 * Add all the documents in the finite state machine and closes the writer.
