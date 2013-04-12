@@ -20,10 +20,9 @@ public class App {
 	public static void main(String[] args) throws ParseException, IOException {
 		stdout = new PrintStream(System.out, true, "UTF-8");
 		System.setOut(stdout);
-		manager = new com.ntnu.tdt4215.searchEngine.NLH();
+		manager = new com.ntnu.tdt4215.searchEngine.NLHIcd10();
 		// We clean the folder containing the index
     	if (args.length == 1 && args[0].equals("--clean")) {
-
     		try {
 				manager.clean();
 			} catch (IOException e) {

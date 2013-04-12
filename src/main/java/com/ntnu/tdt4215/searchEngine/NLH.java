@@ -44,7 +44,7 @@ public class NLH extends SearchEngine {
 			} else {
 				throw new IOException("Can't delete the directory:" + FILE.getAbsolutePath());
 			}
-		} else if(!FILE.isDirectory()) {
+		} else if(FILE.exists() && !FILE.isDirectory()) {
 			throw new IOException("Can't delete:" + FILE.getAbsolutePath() + " it is not a directory");
 		}
 	}
