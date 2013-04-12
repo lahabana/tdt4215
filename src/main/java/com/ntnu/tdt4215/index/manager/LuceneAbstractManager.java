@@ -31,8 +31,6 @@ abstract public class LuceneAbstractManager implements IndexManager {
 	public LuceneAbstractManager(Directory dir, Analyzer analyzer2, QueryFactory qpf) {
 	    index = dir;
 	    this.analyzer = analyzer2;
-	    qpf.setAnalyzer(analyzer2);
-	    qpf.setVersion(VERSION);
 	    queryFactory = qpf;
 	}
 	

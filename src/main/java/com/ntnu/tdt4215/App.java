@@ -1,19 +1,11 @@
 package com.ntnu.tdt4215;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.no.NorwegianAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.SimpleFSDirectory;
-import org.apache.lucene.util.Version;
 
 import com.ntnu.tdt4215.index.manager.MultipleIndexManager;
 import com.ntnu.tdt4215.index.manager.NLHOnlyMultipleIndexManager;
-import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
-import com.ntnu.tdt4215.query.QueryFactory;
-import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,31 +15,32 @@ import java.util.Vector;
 
 public class App {
 	
-	static Directory index;
-	static Analyzer analyzer;
-	static QueryFactory qpf;
 	static MultipleIndexManager manager;
-	final static File FILE = new File("index");
 	static PrintStream stdout;
 	
-	public static void main(String[] args) throws IOException, ParseException {
+	public static void main(String[] args) throws ParseException, IOException {
 		stdout = new PrintStream(System.out, true, "UTF-8");
 		System.setOut(stdout);
+		manager = new NLHOnlyMultipleIndexManager();
 		// We clean the folder containing the index
     	if (args.length == 1 && args[0].equals("--clean")) {
-    		if (FILE.exists() && FILE.isDirectory() && FILE.canWrite()) {
-    			FileUtils.deleteDirectory(FILE);
-    		} else {
-    			System.err.println("Can't delete the directory:" + FILE.getAbsolutePath());
-    			System.exit(-1);
-    		}
+
+    		try {
+				manager.clean();
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+				System.exit(-1);
+			}
     	} else if (args.length == 1 && args[0].equals("--index")) {
-    		// We want to index new documents
-    		initIndex();
-    		indexAll();
+    		// We want to index all accessible documents
+    		try {
+				manager.indexAll();
+			} catch (IOException e) {
+				System.err.println("An error occured while indexing");
+				System.exit(-2);
+			}
     	} else if(args.length == 1 && args[0].equals("--search")) {
     		// We want to search the index
-    		initIndex();
     		searchLoop();
     	} else {
     		// Invalid entry we show the help
@@ -78,18 +71,6 @@ public class App {
 	}
 
 	/**
-	 * Index all the documents that will be used for search
-	 * @throws IOException
-	 */
-	private static void indexAll() throws IOException {
-		// Create your fsm
-		//BasicFSM fsm = new BasicFSM();
-		String[] folders = {"Download/G/", "Download/L/", "Download/T/"};
-		NLHWebsiteCrawlerFSM fsm = new NLHWebsiteCrawlerFSM(folders);
-		manager.addAll("NLHIndex", fsm);
-	}
-
-	/**
 	 * Show the help message
 	 */
 	private static void showHelp() {
@@ -99,27 +80,6 @@ public class App {
 		System.out.println("\t\t--index: index documents");
 		System.out.println("\t\t--search start the program to search the index");
 		System.out.println("\t\t--clean: empty the index");
-		System.out.println("\t\t--measure: compare to the gold standard and output some stats");
-	}
-	
-	/**
-	 * Opens the index and prepare it to be either queried or to add documents to the index
-	 * @throws IOException
-	 */
-	private static void initIndex() throws IOException {
-	    // Create the folder that will hold the index on the FS
-		if (!FILE.exists()) {
-	    	if (!FILE.mkdir()) {
-    			System.err.println("Can't create the directory:" + FILE.getAbsolutePath() + 
-    								" to save the index");
-    			System.exit(-1);	    		
-	    	}
-	    }
-		index = new SimpleFSDirectory(FILE);
-	
-	    qpf = new SimpleQueryFactory();
-	    analyzer = new NorwegianAnalyzer(Version.LUCENE_40);
-	    manager = new NLHOnlyMultipleIndexManager(index, analyzer, qpf);
 	}
 	
 	/**

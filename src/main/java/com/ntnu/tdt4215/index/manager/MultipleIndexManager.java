@@ -37,6 +37,12 @@ abstract public class MultipleIndexManager implements IndexManager {
 		return indexes.get(key);
 	}
 
+	/**
+	 * Add all the elements in the fsm to the index identified by "key"
+	 * @param key
+	 * @param fsm
+	 * @throws IOException
+	 */
 	public void addAll(String key, IndexingFSM fsm) throws IOException {
 		IndexManager dm = indexes.get(key);
 		if (dm == null) {
@@ -44,6 +50,18 @@ abstract public class MultipleIndexManager implements IndexManager {
 		}
 		dm.addAll(fsm);
 	}
+
+	/**
+	 * Deletes all the already existing indexes
+	 * @throws IOException
+	 */
+	abstract public void clean() throws IOException;
+
+	/**
+	 * Index all the documents to the index
+	 * @throws IOException
+	 */
+	abstract public void indexAll() throws IOException;
 	
 	public void closeWriter() throws IOException {
 		for (String key : indexes.keySet()) {
