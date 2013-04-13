@@ -42,6 +42,10 @@ public class NLHChapter implements IndexableDocument {
 		return title;
 	}
 	
+	public String getContent() {
+		return content;
+	}
+	
 	public Document getDocument() {
 		return document;
 	}
