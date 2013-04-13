@@ -92,7 +92,7 @@ public class App {
 			System.err.println("Can't read the file: " + line);
 		} else {
     		String contents = FileUtils.readFileToString(f, Charset.forName("UTF-8"));
-    		Vector<Document> docs = manager.getResults(3, contents);
+    		Vector<Document> docs = manager.getResults(10, contents);
     		System.out.println("Matches:");
     		for (Document d: docs) {
     			System.out.println(d.get("title"));

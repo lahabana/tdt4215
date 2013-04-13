@@ -53,7 +53,7 @@ public class Icd10Class implements OwlClass {
 		FieldType ft = new FieldType();
 		ft.setStored(true);
 		ft.setTokenized(false);
-		ft.setIndexed(true);
+		ft.setIndexed(false);
 		document.add(new Field("id", id, ft));
 	}
 
