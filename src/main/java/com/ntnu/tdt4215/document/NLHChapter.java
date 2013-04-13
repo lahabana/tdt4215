@@ -39,7 +39,7 @@ public class NLHChapter implements IndexableDocument {
 	}
 	
 	public String getTitle() {
-		return document.get("title");
+		return title;
 	}
 	
 	public Document getDocument() {
