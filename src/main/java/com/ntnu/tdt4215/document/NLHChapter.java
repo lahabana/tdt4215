@@ -7,6 +7,8 @@ import org.apache.lucene.document.FieldType;
 public class NLHChapter implements IndexableDocument {
 	// The Lucene document that is created.
 	protected Document document;
+	String title;
+	String content;
 	
 	public NLHChapter() {
 		document = new Document();
@@ -19,6 +21,7 @@ public class NLHChapter implements IndexableDocument {
 	}
 	
 	protected void setTitle(String title) {
+		this.title = title;
 		FieldType ft = new FieldType();
 		ft.setStored(true);
 		ft.setTokenized(true);
@@ -27,6 +30,7 @@ public class NLHChapter implements IndexableDocument {
 	}
 	
 	protected void setContent(String content) {
+		this.content = content;
 		FieldType ft = new FieldType();
 		ft.setStored(false);
 		ft.setTokenized(true);
