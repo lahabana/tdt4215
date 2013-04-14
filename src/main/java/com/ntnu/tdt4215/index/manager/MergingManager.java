@@ -25,17 +25,20 @@ public class MergingManager extends LuceneAbstractManager {
 
 	public Collection<ScoredDocument> getResults(int nbHits, String queryStr)
 			throws IOException, ParseException {
+		ScoredDocument.resetMaxOccurence();
 	    IndexSearcher searcher = new IndexSearcher(getReader());	
 	    ArrayList<String> queries = mergePolicy.splitQuery(queryStr);
 	    for (String query : queries) {
 	    	TopScoreDocCollector collector = TopScoreDocCollector.create(nbHits, true);
 	    	searcher.search(queryFactory.parse(QueryParser.escape(query)), collector);
 	    	ScoreDoc[] hits = collector.topDocs().scoreDocs;
-	    	for(int i=0;i<hits.length;++i) {
-	    		mergePolicy.map(new ScoredDocument(searcher.doc(hits[i].doc), hits[i].score));
+	    	for (int i=0; i<hits.length; ++i) {
+	    		mergePolicy.map(searcher.doc(hits[i].doc), hits[i].score);
 	    	}
 	    }
-	    return mergePolicy.reduce(nbHits);
+	    Collection<ScoredDocument> res = mergePolicy.reduce(nbHits);
+	    ScoredDocument.resetMaxOccurence();
+	    return res;
 	}
 
 }

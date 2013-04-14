@@ -49,10 +49,10 @@ public class NLHIcd10 extends SearchEngine {
 	
 	private void createManagers() throws IOException {
 		Directory dirIcd10 = new SimpleFSDirectory(INDEXICD10);
-		IndexManager idxIcd10 = new MergingManager(dirIcd10, norwegianQPF, new SentenceQueryPolicy(2.0f));
+		IndexManager idxIcd10 = new MergingManager(dirIcd10, norwegianQPF, new SentenceQueryPolicy(2f));
 		addIndex("icd10", idxIcd10);
 		Directory dirATC = new SimpleFSDirectory(INDEXATC);
-		IndexManager idxATC = new MergingManager(dirATC, norwegianQPF, new SentenceQueryPolicy(2.0f));
+		IndexManager idxATC = new MergingManager(dirATC, norwegianQPF, new SentenceQueryPolicy(2f));
 		addIndex("atc", idxATC);
 		
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);

@@ -3,6 +3,8 @@ package com.ntnu.tdt4215.index;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.lucene.document.Document;
+
 import com.ntnu.tdt4215.document.ScoredDocument;
 
 /**
@@ -27,7 +29,7 @@ public interface MultipleQueryPolicy {
 	 * add the document as a match in the query
 	 * @param doc
 	 */
-	public void map(ScoredDocument doc);	
+	public void map(Document doc, float score);
 	
 	/**
 	 * Rank/Cut to obtain the actual result to the main query

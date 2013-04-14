@@ -6,6 +6,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 
+import org.apache.lucene.document.Document;
+
 import com.ntnu.tdt4215.document.ScoredDocument;
 
 /**
@@ -34,13 +36,13 @@ public class SentenceQueryPolicy implements MultipleQueryPolicy {
 		return arr;
 	}
 
-	public void map(ScoredDocument doc) {
-		String id = doc.getField("id");
-		if (docs.get(id) != null) {
-			ScoredDocument d2 = docs.get(id);
-			d2.setScore(doc.getScore() + d2.getScore());
+	public void map(Document doc, float score) {
+		String id = doc.get("id");
+		ScoredDocument d2 = docs.get(id);
+		if (d2 != null) {
+			d2.addScore(score);
 		} else {
-			docs.put(id, doc);
+			docs.put(id, new ScoredDocument(doc, score));
 		}
 	}
 
@@ -49,7 +51,7 @@ public class SentenceQueryPolicy implements MultipleQueryPolicy {
 		Enumeration<ScoredDocument> enumer = docs.elements();
 		while (enumer.hasMoreElements()) {
 			ScoredDocument doc = enumer.nextElement();
-			if (doc.getScore() > limit) {
+			if (doc.getNormalizedScore() > limit) {
 				res.add(doc);
 			}
 		}

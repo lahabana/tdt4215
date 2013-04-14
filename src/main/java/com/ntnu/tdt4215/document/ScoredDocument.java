@@ -9,6 +9,8 @@ import org.apache.lucene.document.Document;
 public class ScoredDocument implements Comparable<ScoredDocument> {
 	protected Document doc;
 	protected float score;
+	public static int maxOccurence = 1;
+	private int occurence = 1;
 	
 	public ScoredDocument(Document d, float sc) {
 		doc = d;
@@ -19,6 +21,14 @@ public class ScoredDocument implements Comparable<ScoredDocument> {
 		return score;
 	}
 	
+	public float getNormalizedScore() {
+		return score/maxOccurence;
+	}
+	
+	public static void resetMaxOccurence() {
+		maxOccurence = 1;
+	}
+	
 	public Document getDocument() {
 		return doc;
 	}
@@ -26,9 +36,23 @@ public class ScoredDocument implements Comparable<ScoredDocument> {
 	public String getField(String id) {
 		return doc.get(id);
 	}
+	
+	public void setScore(float d) {
+		score = d;
+	}
+	
+	public void addScore(float d) {
+		occurence++;
+		if (occurence > maxOccurence) {
+			maxOccurence = occurence;
+		}
+		score += d;
+	}
 
 	public int compareTo(ScoredDocument o) {
-		return (score == o.score) ? 0 : (score > o.score ? 1 : -1);
+		float scoreT = getNormalizedScore();
+		float scoreO = o.getNormalizedScore();
+		return (scoreT == scoreO) ? 0 : (scoreT > scoreO ? 1 : -1);
 	}
 	
 	@Override
@@ -37,9 +61,5 @@ public class ScoredDocument implements Comparable<ScoredDocument> {
 			return doc.get("id") == ((ScoredDocument) o).doc.get("id");
 		}
 		return false;
-	}
-
-	public void setScore(float d) {
-		score = d;
 	}
 }
