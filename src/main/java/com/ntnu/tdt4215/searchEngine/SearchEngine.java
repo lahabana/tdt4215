@@ -1,12 +1,12 @@
 package com.ntnu.tdt4215.searchEngine;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Hashtable;
-import java.util.Vector;
 
-import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 
+import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.index.manager.IndexManager;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 
@@ -52,7 +52,7 @@ abstract public class SearchEngine {
 	 * @throws ParseException 
 	 * @throws IOException 
 	 */
-	abstract public Vector<Document> getResults(int maxResults, String queryString) throws IOException, ParseException;
+	abstract public Collection<ScoredDocument> getResults(int maxResults, String queryString) throws IOException, ParseException;
 
 	/**
 	 * Index all the documents to the index

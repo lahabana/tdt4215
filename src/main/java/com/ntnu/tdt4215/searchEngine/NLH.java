@@ -2,14 +2,14 @@ package com.ntnu.tdt4215.searchEngine;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
+import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.query.NorwegianQueryFactory;
@@ -32,7 +32,7 @@ public class NLH extends SearchEngine {
 		addIndex("NLHIndex", idx);
 	}
 	
-	public Vector<Document> getResults(int maxElt, String queryStr) throws IOException, ParseException {
+	public Collection<ScoredDocument> getResults(int maxElt, String queryStr) throws IOException, ParseException {
 		return getIndex("NLHIndex").getResults(maxElt, queryStr);
 	}
 

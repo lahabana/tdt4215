@@ -1,13 +1,14 @@
 package com.ntnu.tdt4215.index.manager;
 
 import java.io.IOException;
-import java.util.Vector;
+import java.util.Collection;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryparser.classic.ParseException;
 
+import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 
 public interface IndexManager {
@@ -35,7 +36,7 @@ public interface IndexManager {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public Vector<Document> getResults(int nbHits, String querystr) throws IOException, ParseException;
+	public Collection<ScoredDocument> getResults(int nbHits, String querystr) throws IOException, ParseException;
 	
 	/**
 	 * Returns the index reader (this is especially useful for singletons)

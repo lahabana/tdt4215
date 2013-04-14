@@ -1,6 +1,6 @@
 package com.ntnu.tdt4215.document;
 
-import java.util.Vector;
+import java.util.Collection;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -14,12 +14,12 @@ public class NLHIcd10s implements IndexableDocument {
 	String title;
 	String content;
 	
-	public NLHIcd10s(String title, Vector<Document> content) {
+	public NLHIcd10s(String title, Collection<ScoredDocument> content) {
 		document = new Document();
 		setTitle(title);
 		setContent(content);
 	}
-	
+
 	protected void setTitle(String title) {
 		this.title = title;
 		FieldType ft = new FieldType();
@@ -29,10 +29,10 @@ public class NLHIcd10s implements IndexableDocument {
 		document.add(new Field("title", title, ft));
 	}
 	
-	protected void setContent(Vector<Document> content) {
+	protected void setContent(Collection<ScoredDocument> content) {
 		String res = "";
-		for (Document d: content) {
-			res += d.get("id") + " "; 
+		for (ScoredDocument d: content) {
+			res += d.getField("id") + " "; 
 		}
 		res = res.substring(0, res.length() - 1);
 		this.content = res;

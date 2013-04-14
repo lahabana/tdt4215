@@ -1,16 +1,16 @@
 package com.ntnu.tdt4215;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 
+import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.searchEngine.SearchEngine;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-import java.util.Vector;
+import java.util.Collection;
 
 public class App {
 	
@@ -92,10 +92,10 @@ public class App {
 			System.err.println("Can't read the file: " + line);
 		} else {
     		String contents = FileUtils.readFileToString(f, Charset.forName("UTF-8"));
-    		Vector<Document> docs = manager.getResults(10, contents);
+    		Collection<ScoredDocument> docs = manager.getResults(10, contents);
     		System.out.println("Matches:");
-    		for (Document d: docs) {
-    			System.out.println(d.get("title"));
+    		for (ScoredDocument d: docs) {
+    			System.out.println(d.getField("title"));
     		}
 		}
 	}

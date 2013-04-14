@@ -1,9 +1,9 @@
 package com.ntnu.tdt4215.index;
 
 import java.util.ArrayList;
-import java.util.Vector;
+import java.util.Collection;
 
-import org.apache.lucene.document.Document;
+import com.ntnu.tdt4215.document.ScoredDocument;
 
 /**
  * The goal of this interface is to deal with queries that should
@@ -27,13 +27,13 @@ public interface MultipleQueryPolicy {
 	 * add the document as a match in the query
 	 * @param doc
 	 */
-	public void map(Document doc);	
+	public void map(ScoredDocument doc);	
 	
 	/**
 	 * Rank/Cut to obtain the actual result to the main query
 	 * @param nbHits
 	 * @return
 	 */
-	public Vector<Document> reduce(int nbHits);
+	public Collection<ScoredDocument> reduce(int nbHits);
 
 }

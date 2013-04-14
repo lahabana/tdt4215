@@ -2,16 +2,16 @@ package com.ntnu.tdt4215.searchEngine;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 import com.ntnu.tdt4215.document.NLHChapter;
 import com.ntnu.tdt4215.document.NLHIcd10s;
+import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.index.SentenceQueryPolicy;
 import com.ntnu.tdt4215.index.manager.IndexManager;
 import com.ntnu.tdt4215.index.manager.MergingManager;
@@ -57,15 +57,15 @@ public class NLHIcd10 extends SearchEngine {
 
 	}
 
-	public Vector<Document> getResults(int nbHits, String querystr)
+	public Collection<ScoredDocument> getResults(int nbHits, String querystr)
 			throws IOException, ParseException {
-		Vector<Document> docs = getIndex("icd10").getResults(NBHITS_ICD, querystr);
+		Collection<ScoredDocument> docs = getIndex("icd10").getResults(NBHITS_ICD, querystr);
 		String queryIcd = "";
-		for (Document d : docs) {
-			queryIcd += d.get("id") + " ";
+		for (ScoredDocument d : docs) {
+			queryIcd += d.getField("id") + " ";
 		}
-		Vector<Document> icdChapters = getIndex("NLHicd10").getResults(nbHits / 2, queryIcd);
-		Vector<Document> chapters = getIndex("NLH").getResults(nbHits / 2, querystr);
+		Collection<ScoredDocument> icdChapters = getIndex("NLHicd10").getResults(nbHits / 2, queryIcd);
+		Collection<ScoredDocument> chapters = getIndex("NLH").getResults(nbHits / 2, querystr);
 		icdChapters.addAll(chapters);
 		return icdChapters;
 	}
@@ -87,7 +87,7 @@ public class NLHIcd10 extends SearchEngine {
 			NLHChapter chap = (NLHChapter) NLHfsm.next();
 			try {
 				// We look for entries in icd10 that match the chapter
-				Vector<Document> res = indexes.get("icd10").getResults(NBHITS_ICD, chap.getContent());
+				Collection<ScoredDocument> res = indexes.get("icd10").getResults(NBHITS_ICD, chap.getContent());
 				// We add these entries inside an index
 				getIndex("NLHicd10").addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
 				

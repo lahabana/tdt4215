@@ -1,12 +1,12 @@
 package com.ntnu.tdt4215.index;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.PriorityQueue;
-import java.util.Vector;
 
-import org.apache.lucene.document.Document;
+import com.ntnu.tdt4215.document.ScoredDocument;
 
 /**
  * A MultipleQueryPolicy that will split the query in separated sentences
@@ -15,8 +15,8 @@ import org.apache.lucene.document.Document;
  *
  */
 public class SentenceQueryPolicy implements MultipleQueryPolicy {
-	Hashtable<String, Integer> results = new Hashtable<String, Integer>();
-	Hashtable<String, Document> docs = new Hashtable<String, Document>();
+	Hashtable<String, Float> results = new Hashtable<String, Float>();
+	Hashtable<String, ScoredDocument> docs = new Hashtable<String, ScoredDocument>();
 
 	public ArrayList<String> splitQuery(String query) {
 		String[] sentences = query.split("[\\.\\!\\?]");
@@ -30,52 +30,45 @@ public class SentenceQueryPolicy implements MultipleQueryPolicy {
 		return arr;
 	}
 
-	public void map(Document doc) {
-		String id = doc.get("id");
+	public void map(ScoredDocument doc) {
+		String id = doc.getField("id");
 		if (results.get(id) != null) {
-			results.put(id, results.get(id) + 1);
+			results.put(id, results.get(id) + doc.getScore());
 		} else {
-			results.put(id, 1);
+			results.put(id, doc.getScore());
 			docs.put(id, doc);
 		}
 	}
 
-	public Vector<Document> reduce(int nbHits) {
+	public Collection<ScoredDocument> reduce(int nbHits) {
 		Enumeration<String> keys = results.keys();
-		PriorityQueue<Elt> pq = new PriorityQueue<Elt>();
+		BoundedPriorityQueue <ScoredDocument> pq = new BoundedPriorityQueue<ScoredDocument>(nbHits);
 		while (keys.hasMoreElements()) {
 			String id = keys.nextElement();
-			results.get(id);
-			pq.add(new Elt(id, results.get(id)));
+			pq.add(new ScoredDocument(docs.get(id).getDocument(), results.get(id)));
 		}
-		Vector<Document> res = new Vector<Document>();
-		for (int i = 0; i < nbHits && !pq.isEmpty(); i++) {
-			String id = pq.remove().getId();
-			res.add(docs.get(id));
-		}
-		results = new Hashtable<String, Integer>();
-		docs = new Hashtable<String, Document>();
-		return res;
+		results = new Hashtable<String, Float>();
+		docs = new Hashtable<String, ScoredDocument>();
+		return pq;
 	}
 
 }
 
-class Elt implements Comparable<Elt> {
-	String id;
-	int nb;
-	
-	public Elt(String id, int nb) {
-		this.id = id;
-		this.nb = nb;
-	}
-	
-	public String getId() {
-		return id;
-	}
+class BoundedPriorityQueue<T> extends PriorityQueue<T> {
+	private static final long serialVersionUID = 1L;
+	private int maxItems;
+    public BoundedPriorityQueue(int maxItems){
+        this.maxItems = maxItems;
+    }
 
-	public int compareTo(Elt o) {
-		return (o.nb == this.nb) ? 0 :
-	    	(o.nb > this.nb ? -1 : 1);
-	}
-	
+    @Override
+    public boolean add(T e) {
+        boolean success = super.add(e);
+        if (!success) {
+            return false;
+        } else if (this.size() > maxItems) {
+        	this.remove(this.toArray()[this.size()-1]);
+        }
+        return true;
+    }
 }
