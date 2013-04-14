@@ -11,9 +11,11 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class App {
 	
+	private static final int MAXDOCS = 5;
 	static SearchEngine manager;
 	static PrintStream stdout;
 	
@@ -92,10 +94,12 @@ public class App {
 			System.err.println("Can't read the file: " + line);
 		} else {
     		String contents = FileUtils.readFileToString(f, Charset.forName("UTF-8"));
-    		Collection<ScoredDocument> docs = manager.getResults(10, contents);
+    		Collection<ScoredDocument> docs = manager.getResults(MAXDOCS, contents);
     		System.out.println("Matches:");
-    		for (ScoredDocument d: docs) {
-    			System.out.println(d.getField("title"));
+    		Iterator<ScoredDocument> it = docs.iterator();
+    		int i = 0;
+    		while (it.hasNext() && i < MAXDOCS) {
+    			System.out.println(it.next().getField("title"));
     		}
 		}
 	}

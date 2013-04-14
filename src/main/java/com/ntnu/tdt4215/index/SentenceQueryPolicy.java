@@ -3,8 +3,8 @@ package com.ntnu.tdt4215.index;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.PriorityQueue;
 
 import com.ntnu.tdt4215.document.ScoredDocument;
 
@@ -15,7 +15,6 @@ import com.ntnu.tdt4215.document.ScoredDocument;
  *
  */
 public class SentenceQueryPolicy implements MultipleQueryPolicy {
-	Hashtable<String, Float> results = new Hashtable<String, Float>();
 	Hashtable<String, ScoredDocument> docs = new Hashtable<String, ScoredDocument>();
 
 	public ArrayList<String> splitQuery(String query) {
@@ -32,43 +31,22 @@ public class SentenceQueryPolicy implements MultipleQueryPolicy {
 
 	public void map(ScoredDocument doc) {
 		String id = doc.getField("id");
-		if (results.get(id) != null) {
-			results.put(id, results.get(id) + doc.getScore());
+		if (docs.get(id) != null) {
+			ScoredDocument d2 = docs.get(id);
+			d2.setScore(doc.getScore() + d2.getScore());
 		} else {
-			results.put(id, doc.getScore());
 			docs.put(id, doc);
 		}
 	}
 
 	public Collection<ScoredDocument> reduce(int nbHits) {
-		Enumeration<String> keys = results.keys();
-		BoundedPriorityQueue <ScoredDocument> pq = new BoundedPriorityQueue<ScoredDocument>(nbHits);
-		while (keys.hasMoreElements()) {
-			String id = keys.nextElement();
-			pq.add(new ScoredDocument(docs.get(id).getDocument(), results.get(id)));
+		HashSet<ScoredDocument> res = new HashSet<ScoredDocument>(docs.size());
+		Enumeration<ScoredDocument> enumer = docs.elements();
+		while (enumer.hasMoreElements()) {
+			res.add(enumer.nextElement());
 		}
-		results = new Hashtable<String, Float>();
 		docs = new Hashtable<String, ScoredDocument>();
-		return pq;
+		return res;
 	}
 
-}
-
-class BoundedPriorityQueue<T> extends PriorityQueue<T> {
-	private static final long serialVersionUID = 1L;
-	private int maxItems;
-    public BoundedPriorityQueue(int maxItems){
-        this.maxItems = maxItems;
-    }
-
-    @Override
-    public boolean add(T e) {
-        boolean success = super.add(e);
-        if (!success) {
-            return false;
-        } else if (this.size() > maxItems) {
-        	this.remove(this.toArray()[this.size()-1]);
-        }
-        return true;
-    }
 }

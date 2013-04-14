@@ -2,7 +2,9 @@ package com.ntnu.tdt4215.searchEngine;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -69,10 +71,25 @@ public class NLHIcd10 extends SearchEngine {
 		for (ScoredDocument d : docs) {
 			queryIcd += d.getField("id") + " ";
 		}
-		Collection<ScoredDocument> icdChapters = getIndex("NLHicd10").getResults(nbHits / 2, queryIcd);
-		Collection<ScoredDocument> chapters = getIndex("NLH").getResults(nbHits / 2, querystr);
-		icdChapters.addAll(chapters);
-		return icdChapters;
+		Collection<ScoredDocument> icdChapters = getIndex("NLHicd10").getResults(nbHits, queryIcd);
+		Collection<ScoredDocument> chapters = getIndex("NLH").getResults(nbHits, querystr);
+		ArrayList<ScoredDocument> res = new ArrayList<ScoredDocument>(nbHits);
+		for (ScoredDocument sd: chapters) {
+			if (icdChapters.contains(sd)) {
+				sd.setScore(sd.getScore() * 1.2f);
+			}
+			res.add(sd);
+		}
+		for (ScoredDocument sd: icdChapters) {
+			if (sd.getScore() > 0.5) {
+				if (!chapters.contains(sd)) {
+					res.add(sd);
+				}
+			}
+		}
+
+		Collections.sort(res);
+		return res;
 	}
 
 	@Override

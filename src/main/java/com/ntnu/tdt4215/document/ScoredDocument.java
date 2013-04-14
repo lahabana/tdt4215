@@ -4,7 +4,6 @@ import org.apache.lucene.document.Document;
 
 /**
  * A class that holds a Lucene Document and its score
- * @author charlymolter
  *
  */
 public class ScoredDocument implements Comparable<ScoredDocument> {
@@ -30,5 +29,17 @@ public class ScoredDocument implements Comparable<ScoredDocument> {
 
 	public int compareTo(ScoredDocument o) {
 		return (score == o.score) ? 0 : (score > o.score ? 1 : -1);
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof ScoredDocument) {
+			return doc.get("id") == ((ScoredDocument) o).doc.get("id");
+		}
+		return false;
+	}
+
+	public void setScore(float d) {
+		score = d;
 	}
 }

@@ -45,7 +45,7 @@ abstract public class SearchEngine {
 	abstract public void clean() throws IOException;
 	
 	/**
-	 * Returns the results of the queryString
+	 * Returns the results of the queryString the collection can return more results that maxResults
 	 * @param maxResults
 	 * @param queryString
 	 * @return
