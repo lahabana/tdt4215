@@ -101,7 +101,9 @@ public class App {
     		Iterator<ScoredDocument> it = docs.iterator();
     		int i = 0;
     		while (it.hasNext() && i < MAXDOCS) {
-    			System.out.println(it.next().getField("title"));
+    			ScoredDocument doc = it.next();
+    			System.out.println(/*doc.getScore() + */doc.getField("title"));
+    			i++;
     		}
 		}
 	}

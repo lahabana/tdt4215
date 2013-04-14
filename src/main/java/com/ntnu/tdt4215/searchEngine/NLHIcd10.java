@@ -49,10 +49,10 @@ public class NLHIcd10 extends SearchEngine {
 	
 	private void createManagers() throws IOException {
 		Directory dirIcd10 = new SimpleFSDirectory(INDEXICD10);
-		IndexManager idxIcd10 = new MergingManager(dirIcd10, norwegianQPF, new SentenceQueryPolicy(2f));
+		IndexManager idxIcd10 = new MergingManager(dirIcd10, norwegianQPF, new SentenceQueryPolicy(2));
 		addIndex("icd10", idxIcd10);
 		Directory dirATC = new SimpleFSDirectory(INDEXATC);
-		IndexManager idxATC = new MergingManager(dirATC, norwegianQPF, new SentenceQueryPolicy(2f));
+		IndexManager idxATC = new MergingManager(dirATC, norwegianQPF, new SentenceQueryPolicy(0));
 		addIndex("atc", idxATC);
 		
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);
@@ -74,25 +74,15 @@ public class NLHIcd10 extends SearchEngine {
 			}
 			icdChapters = getIndex("NLHicd10").getResults(nbHits, queryIcd);
 		}
-		Collection<ScoredDocument> chapters = getIndex("NLH").getResults(nbHits, querystr);
+		Collection<ScoredDocument> chapters = getIndex("NLH").getResults(nbHits * 4, querystr);
 		ArrayList<ScoredDocument> res = new ArrayList<ScoredDocument>(nbHits);
 		for (ScoredDocument sd: chapters) {
 			if (icdChapters != null && icdChapters.contains(sd)) {
-				sd.setScore(sd.getScore() * 1.2f);
+				sd.setScore(sd.getScore() + 0.1f);// Probably add some sort of reinforcement here
 			}
 			res.add(sd);
 		}
-		if (icdChapters != null) {
-			for (ScoredDocument sd: icdChapters) {
-				if (sd.getScore() > 0.5) {
-					if (!chapters.contains(sd)) {
-						res.add(sd);
-					}
-				}
-			}
-		}
-
-		Collections.sort(res);
+		Collections.sort(res, Collections.reverseOrder());
 		return res;
 	}
 
