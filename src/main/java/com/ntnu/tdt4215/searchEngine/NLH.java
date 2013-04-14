@@ -3,6 +3,8 @@ package com.ntnu.tdt4215.searchEngine;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -21,8 +23,8 @@ import com.ntnu.tdt4215.query.QueryFactory;
  *
  */
 public class NLH extends SearchEngine {
-	private static final File FILE = new File("NLHindex");
-	private static final String[] FOLDERS = {"Download/G/", "Download/L/", "Download/T/"};
+	private static final File FILE = new File("indexes/NLHindex");
+	private static final String[] FOLDERS = {"documents/NLH/G/", "documents/NLH/L/", "documents/NLH/T/"};
 
 	public NLH() throws IOException {
 		super();
@@ -33,7 +35,9 @@ public class NLH extends SearchEngine {
 	}
 	
 	public Collection<ScoredDocument> getResults(int maxElt, String queryStr) throws IOException, ParseException {
-		return getIndex("NLHIndex").getResults(maxElt, queryStr);
+		List<ScoredDocument> res = (List<ScoredDocument>) getIndex("NLHIndex").getResults(maxElt, queryStr);
+		Collections.sort(res);
+		return res;
 	}
 
 	@Override

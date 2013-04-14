@@ -23,6 +23,8 @@ public class App {
 		stdout = new PrintStream(System.out, true, "UTF-8");
 		System.setOut(stdout);
 		manager = new com.ntnu.tdt4215.searchEngine.NLHIcd10();
+		//manager = new com.ntnu.tdt4215.searchEngine.NLH();
+		
 		// We clean the folder containing the index
     	if (args.length == 1 && args[0].equals("--clean")) {
     		try {
