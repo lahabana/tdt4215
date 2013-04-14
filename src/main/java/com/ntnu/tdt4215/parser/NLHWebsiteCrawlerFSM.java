@@ -25,7 +25,13 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM {
 	protected static FileFilter filter = new NLHFileFilter();
 	
 	public NLHWebsiteCrawlerFSM(String[] folders) {
+		files = new ArrayList<File>();
 		loadFilesToCrawl(folders);
+	}
+	
+	public NLHWebsiteCrawlerFSM(String folder) {
+		files = new ArrayList<File>();
+		loadFileFolder(folder);
 	}
 
 	public boolean hasNext() {
@@ -73,17 +79,19 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM {
 	 * @param folders
 	 */
 	protected void loadFilesToCrawl(String[] folders) {
-		files = new ArrayList<File>();
 		for (int i = 0; i < folders.length; i++) {
-			File dir = new File(folders[i]);
-			if (!dir.canRead() || !dir.isDirectory()) {
-				System.err.println("Can't read directory:" + dir.getAbsolutePath());
-			} else {
-				for (File f: dir.listFiles(filter)) {
-					files.add(f);
-				}
+			loadFileFolder(folders[i]);	
+		}
+	}
+	
+	protected void loadFileFolder(String folder) {
+		File dir = new File(folder);
+		if (!dir.canRead() || !dir.isDirectory()) {
+			System.err.println("Can't read directory:" + dir + " it is not a directory");
+		} else {
+			for (File f: dir.listFiles(filter)) {
+				files.add(f);
 			}
-			
 		}
 	}
 	

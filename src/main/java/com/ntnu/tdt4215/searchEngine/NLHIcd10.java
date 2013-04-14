@@ -34,7 +34,6 @@ public class NLHIcd10 extends SearchEngine {
 	private static final File INDEXICD10 = new File("indexes/icd10");
 	private static final File INDEXNLHICD10 = new File("indexes/NLHicd10");
 	private static final File INDEXATC = new File("indexes/atc");
-	private static final String[] FOLDERS = {"documents/NLH/G/", "documents/NLH/L/", "documents/NLH/T/"};
 	private static final int NBHITS_ICD = 1;
 
 	public NLHIcd10() throws IOException {
@@ -108,7 +107,7 @@ public class NLHIcd10 extends SearchEngine {
 		/*IndexingFSM atcfsm = new AtcFSM("documents/atc_no_ext.ttl");
 		addAll("atc", atcfsm);*/
 		
-		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM(FOLDERS);
+		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM("documents/NLH/T/");
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {
 			NLHChapter chap = (NLHChapter) NLHfsm.next();
@@ -126,6 +125,10 @@ public class NLHIcd10 extends SearchEngine {
 			}
 		}
 		NLHfsm.finish();
+		IndexingFSM NLHfsm2 = new NLHWebsiteCrawlerFSM("documents/NLH/L/");
+		addAll("NLH", NLHfsm2);
+		IndexingFSM NLHfsm3 = new NLHWebsiteCrawlerFSM("documents/NLH/G/");
+		addAll("NLH", NLHfsm3);
 		this.closeWriter();
 	}
 	
