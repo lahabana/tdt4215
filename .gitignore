@@ -5,4 +5,5 @@ target/
 *.jar
 *.war
 *.ear
-/index/
+/indexes/*
+/documents/*

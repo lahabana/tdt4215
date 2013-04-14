@@ -27,10 +27,10 @@ import com.ntnu.tdt4215.query.WhiteSpaceQueryFactory;
 public class NLHIcd10 extends SearchEngine {
 	private QueryFactory norwegianQPF;
 	private QueryFactory whiteSpaceQPF;
-	private static final File INDEXNLH = new File("NLHindex");
-	private static final File INDEXICD10 = new File("icd10index");
-	private static final File INDEXNLHICD10 = new File("NLHicd10index");
-	private static final String[] FOLDERS = {"Download/G/", "Download/L/", "Download/T/"};
+	private static final File INDEXNLH = new File("indexes/NLHindex");
+	private static final File INDEXICD10 = new File("indexes/icd10index");
+	private static final File INDEXNLHICD10 = new File("indexes/NLHicd10index");
+	private static final String[] FOLDERS = {"documents/NLH/G/", "documents/NLH/L/", "documents/NLH/T/"};
 	private static final int NBHITS_ICD = 5;
 
 	public NLHIcd10() throws IOException {
@@ -79,7 +79,7 @@ public class NLHIcd10 extends SearchEngine {
 
 	@Override
 	public void indexAll() throws IOException {
-		IndexingFSM icd10fsm = new Icd10FSM("icd10no.owl");
+		IndexingFSM icd10fsm = new Icd10FSM("documents/icd10no.owl");
 		addAll("icd10", icd10fsm);
 		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM(FOLDERS);
 		NLHfsm.initialize();
