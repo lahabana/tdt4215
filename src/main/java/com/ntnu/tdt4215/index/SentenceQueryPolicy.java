@@ -16,7 +16,12 @@ import com.ntnu.tdt4215.document.ScoredDocument;
  */
 public class SentenceQueryPolicy implements MultipleQueryPolicy {
 	Hashtable<String, ScoredDocument> docs = new Hashtable<String, ScoredDocument>();
+	private float limit;
 
+	public SentenceQueryPolicy(float limit) {
+		this.limit = limit;
+	}
+	
 	public ArrayList<String> splitQuery(String query) {
 		String[] sentences = query.split("[\\.\\!\\?]");
 		ArrayList<String> arr = new ArrayList<String>();
@@ -43,7 +48,10 @@ public class SentenceQueryPolicy implements MultipleQueryPolicy {
 		HashSet<ScoredDocument> res = new HashSet<ScoredDocument>(docs.size());
 		Enumeration<ScoredDocument> enumer = docs.elements();
 		while (enumer.hasMoreElements()) {
-			res.add(enumer.nextElement());
+			ScoredDocument doc = enumer.nextElement();
+			if (doc.getScore() > limit) {
+				res.add(doc);
+			}
 		}
 		docs = new Hashtable<String, ScoredDocument>();
 		return res;

@@ -49,10 +49,10 @@ public class NLHIcd10 extends SearchEngine {
 	
 	private void createManagers() throws IOException {
 		Directory dirIcd10 = new SimpleFSDirectory(INDEXICD10);
-		IndexManager idxIcd10 = new MergingManager(dirIcd10, norwegianQPF, new SentenceQueryPolicy());
+		IndexManager idxIcd10 = new MergingManager(dirIcd10, norwegianQPF, new SentenceQueryPolicy(2.0f));
 		addIndex("icd10", idxIcd10);
 		Directory dirATC = new SimpleFSDirectory(INDEXATC);
-		IndexManager idxATC = new MergingManager(dirATC, norwegianQPF, new SentenceQueryPolicy());
+		IndexManager idxATC = new MergingManager(dirATC, norwegianQPF, new SentenceQueryPolicy(2.0f));
 		addIndex("atc", idxATC);
 		
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);
@@ -66,23 +66,28 @@ public class NLHIcd10 extends SearchEngine {
 	public Collection<ScoredDocument> getResults(int nbHits, String querystr)
 			throws IOException, ParseException {
 		Collection<ScoredDocument> docs = getIndex("icd10").getResults(NBHITS_ICD, querystr);
-		String queryIcd = "";
-		for (ScoredDocument d : docs) {
-			queryIcd += d.getField("id") + " ";
+		Collection<ScoredDocument> icdChapters = null;
+		if (docs.size() > 0) {
+			String queryIcd = "";
+			for (ScoredDocument d : docs) {
+				queryIcd += d.getField("id") + " ";
+			}
+			icdChapters = getIndex("NLHicd10").getResults(nbHits, queryIcd);
 		}
-		Collection<ScoredDocument> icdChapters = getIndex("NLHicd10").getResults(nbHits, queryIcd);
 		Collection<ScoredDocument> chapters = getIndex("NLH").getResults(nbHits, querystr);
 		ArrayList<ScoredDocument> res = new ArrayList<ScoredDocument>(nbHits);
 		for (ScoredDocument sd: chapters) {
-			if (icdChapters.contains(sd)) {
+			if (icdChapters != null && icdChapters.contains(sd)) {
 				sd.setScore(sd.getScore() * 1.2f);
 			}
 			res.add(sd);
 		}
-		for (ScoredDocument sd: icdChapters) {
-			if (sd.getScore() > 0.5) {
-				if (!chapters.contains(sd)) {
-					res.add(sd);
+		if (icdChapters != null) {
+			for (ScoredDocument sd: icdChapters) {
+				if (sd.getScore() > 0.5) {
+					if (!chapters.contains(sd)) {
+						res.add(sd);
+					}
 				}
 			}
 		}
@@ -115,8 +120,9 @@ public class NLHIcd10 extends SearchEngine {
 				// We look for entries in icd10 that match the chapter
 				Collection<ScoredDocument> res = indexes.get("icd10").getResults(NBHITS_ICD, chap.getContent());
 				// We add these entries inside an index
-				getIndex("NLHicd10").addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
-				
+				if (res.size() > 0) {
+					getIndex("NLHicd10").addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
+				}
 				// We add the chapter to the index
 				getIndex("NLH").addDoc(chap.getDocument());
 			} catch (ParseException e) {
