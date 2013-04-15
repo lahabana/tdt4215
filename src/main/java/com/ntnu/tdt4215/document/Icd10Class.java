@@ -22,16 +22,25 @@ public class Icd10Class implements OwlClass {
 	Document document = new Document();
 	static String ns = "http://research.idi.ntnu.no/hilab/ehr/ontologies/icd10no.owl#";
 	static Property code_compacted = ResourceFactory.createProperty(ns + "code_compacted");
+	static Property synonym = ResourceFactory.createProperty(ns + "synonym");
 	
 	public Icd10Class(Statement stmt) {
 	    Resource  subject   = stmt.getSubject();// get the subject
+	    // get the title
 	    Statement labelStmt = subject.getProperty(RDFS.label);
 	    if (labelStmt != null) {
 	    	content = labelStmt.getString();
+
 	    }
+	    // Get the code of the entry
 	    Statement codeStmt = subject.getProperty(code_compacted);
 	    if (codeStmt != null) {
 	    	id = codeStmt.getString();
+	    }
+	    // Get the synonyms
+	    if (subject.hasProperty(synonym)) {
+	    	Statement propertyStmt = subject.getProperty(synonym);
+	    	content += " " + propertyStmt.getString();
 	    }
 	    setContent();
 	    setId();
