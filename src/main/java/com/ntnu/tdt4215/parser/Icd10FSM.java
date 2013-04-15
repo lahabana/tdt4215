@@ -31,7 +31,7 @@ public class Icd10FSM extends OwlFSM {
         		    if (codeStmt.getString().length() != 0 &&
         		    	!codeStmt.getString().contains("-")) {
         		    	return true;
-        		    } 	
+        		    }
         		}
     		}
         	return false;

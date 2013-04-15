@@ -8,6 +8,7 @@ import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Selector;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.FileManager;
+import com.ntnu.tdt4215.document.Icd10Class;
 
 /**
  * An abstract class to make an FSM on a owl file
@@ -18,7 +19,6 @@ import com.hp.hpl.jena.util.FileManager;
  * @param <T>
  */
 public abstract class OwlFSM implements IndexingFSM {
-	OntModel model;
 	private String filename;
 	protected StmtIterator iter;
 	private Selector selector;
@@ -44,19 +44,19 @@ public abstract class OwlFSM implements IndexingFSM {
 		                                 "File: " + filename + " not found");
 		}
 		// create an empty model
-		 model = ModelFactory.createOntologyModel();
-		 model.read(in, null);
-		 try {
+		Icd10Class.model = ModelFactory.createOntologyModel();
+		Icd10Class.model.read(in, null);
+		try {
 			in.close();
 		} catch (IOException e) {
 			System.err.println("Couldn't close the inputStream");
 		}
-		iter = model.listStatements(selector);
+		iter = Icd10Class.model.listStatements(selector);
 	}
 
 	public void finish() {
 		iter = null;
-		model = null;
+		Icd10Class.model = null;
 	}
 
 }
