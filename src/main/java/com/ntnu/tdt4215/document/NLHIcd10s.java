@@ -42,7 +42,7 @@ public class NLHIcd10s implements IndexableDocument {
 		for (ScoredDocument d: content) {
 			res += d.getField("id") + " "; 
 			Field f = new Field("content" + i, d.getField("id"), ftContent);
-			f.setBoost(d.getScore());
+			//f.setBoost(d.getScore());
 			document.add(f);
 			i++;
 		}

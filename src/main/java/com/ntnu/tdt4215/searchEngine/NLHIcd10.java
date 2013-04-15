@@ -64,8 +64,8 @@ public class NLHIcd10 extends SearchEngine {
 		multifieldQPF.extractFields(idxNLHIcd10.getReader());
 		
 		// Get all the icd entries that are close to the patient case
-		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.5f));
-		Collection<ScoredDocument> docs = idxIcd10.getResults(2, querystr);
+		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.2f));
+		Collection<ScoredDocument> docs = idxIcd10.getResults(1, querystr);
 		Collection<ScoredDocument> icdChapters = null;
 		String queryIcd = "";
 		// If there are icd entries well look for the entries that we have 
@@ -73,24 +73,25 @@ public class NLHIcd10 extends SearchEngine {
 		if (docs.size() > 0) {
 			for (ScoredDocument d : docs) {
 				queryIcd += d.getField("id") + " ";
+				System.out.print(d + "/");
 			}
+			System.out.println();
 			icdChapters = idxNLHIcd10.getResults(nbHits, queryIcd);
 		}
 		// Useful to see how much icd contributes to the overall result
-		/*System.out.println("icd" + queryIcd);
 		if (icdChapters != null) {
 			for (ScoredDocument d: icdChapters) {
 				System.out.print(d + "/");
 			}
 			System.out.println();
-		}*/
+		}
 		// Search for chapters matching the patient case
 		Collection<ScoredDocument> chapters = idxNLH.getResults(nbHits * 4, querystr);
 		ArrayList<ScoredDocument> res = new ArrayList<ScoredDocument>(nbHits);
 		// For each document retrieved by full text we increase its ranking if it also appeared in ICD
 		for (ScoredDocument sd: chapters) {
 			if (icdChapters != null && icdChapters.contains(sd)) {
-				sd.setScore(sd.getScore() + 0.1f);// Probably add some sort of reinforcement here
+				sd.setScore(sd.getScore()* 1.2f);// Probably add some sort of reinforcement here
 			}
 			res.add(sd);
 		}
@@ -111,7 +112,7 @@ public class NLHIcd10 extends SearchEngine {
 		IndexingFSM icd10fsm = new Icd10FSM("documents/icd10no.owl");
 		addAll("icd10", icd10fsm);
 		
-		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0f));
+		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.8f));
 		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM("documents/NLH/T/");
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {

@@ -19,7 +19,6 @@ public class MultifieldQueryFactory implements QueryFactory {
 	
 	public MultifieldQueryFactory() {
 		analyzer = new WhitespaceAnalyzer(VERSION);
-		
 	}
 	
 	public void setFieldNames(String[] fields) {
@@ -34,8 +33,8 @@ public class MultifieldQueryFactory implements QueryFactory {
 			for (int j = 0; j < chap.length; j++) {
 				subquery.add(new TermQuery(new Term(fields[i], chap[j])), BooleanClause.Occur.SHOULD);
 			}
+			q.add(new BooleanClause(subquery, BooleanClause.Occur.SHOULD));
 		}
-		System.out.println(q);
 		return q;
 		
 	}

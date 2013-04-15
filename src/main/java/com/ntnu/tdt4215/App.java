@@ -6,6 +6,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.searchEngine.SearchEngine;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;

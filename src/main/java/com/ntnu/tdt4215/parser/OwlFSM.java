@@ -3,7 +3,6 @@ package com.ntnu.tdt4215.parser;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Selector;
 import com.hp.hpl.jena.rdf.model.StmtIterator;
