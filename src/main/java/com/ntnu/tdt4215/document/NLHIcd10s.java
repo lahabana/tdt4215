@@ -13,6 +13,17 @@ public class NLHIcd10s implements IndexableDocument {
 	protected Document document = new Document();
 	String title;
 	String content;
+	static FieldType ftContent = new FieldType();
+	static FieldType ftTitle = new FieldType();
+
+	static {
+		ftTitle.setStored(true);
+		ftTitle.setTokenized(false);
+		ftTitle.setIndexed(false);
+		ftContent.setStored(true);
+		ftContent.setTokenized(true);
+		ftContent.setIndexed(true);
+	}
 	
 	public NLHIcd10s(String title, Collection<ScoredDocument> content) {
 		document = new Document();
@@ -22,25 +33,20 @@ public class NLHIcd10s implements IndexableDocument {
 
 	protected void setTitle(String title) {
 		this.title = title;
-		FieldType ft = new FieldType();
-		ft.setStored(true);
-		ft.setTokenized(false);
-		ft.setIndexed(false);
-		document.add(new Field("title", title, ft));
+		document.add(new Field("title", title, ftTitle));
 	}
 	
 	protected void setContent(Collection<ScoredDocument> content) {
 		String res = "";
+		int i = 0;
 		for (ScoredDocument d: content) {
 			res += d.getField("id") + " "; 
+			Field f = new Field("content" + i, d.getField("id"), ftContent);
+			f.setBoost(d.getScore());
+			document.add(f);
+			i++;
 		}
-		res = res.substring(0, res.length() - 1);
 		this.content = res;
-		FieldType ft = new FieldType();
-		ft.setStored(true);
-		ft.setTokenized(true);
-		ft.setIndexed(true);
-		document.add(new Field("content", this.content, ft));
 	}
 	
 	public String getTitle() {

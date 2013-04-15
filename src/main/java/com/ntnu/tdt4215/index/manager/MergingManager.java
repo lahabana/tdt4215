@@ -17,14 +17,20 @@ import com.ntnu.tdt4215.query.QueryFactory;
 
 public class MergingManager extends LuceneAbstractManager {
 
-	MultipleQueryPolicy mergePolicy;
-	public MergingManager(Directory dir, QueryFactory qpf, MultipleQueryPolicy mergePol) {
+	MultipleQueryPolicy mergePolicy = null;
+	public MergingManager(Directory dir, QueryFactory qpf) {
 		super(dir, qpf);
+	}
+
+	public void setQueryPolicy(MultipleQueryPolicy mergePol) {
 		mergePolicy = mergePol;
 	}
 
 	public Collection<ScoredDocument> getResults(int nbHits, String queryStr)
 			throws IOException, ParseException {
+		if (mergePolicy == null) {
+			throw new ParseException("No merge policy set");
+		}
 		ScoredDocument.resetMaxOccurence();
 	    IndexSearcher searcher = new IndexSearcher(getReader());	
 	    ArrayList<String> queries = mergePolicy.splitQuery(queryStr);

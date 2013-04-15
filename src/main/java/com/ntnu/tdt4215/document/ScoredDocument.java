@@ -62,4 +62,10 @@ public class ScoredDocument implements Comparable<ScoredDocument> {
 		}
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		String id = doc.get("id");
+		return (id == null ? doc.get("title") : doc.get("id")) + ":" + score;
+	}
 }

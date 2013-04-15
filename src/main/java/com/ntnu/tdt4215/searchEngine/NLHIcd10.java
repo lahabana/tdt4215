@@ -22,19 +22,22 @@ import com.ntnu.tdt4215.parser.AtcFSM;
 import com.ntnu.tdt4215.parser.Icd10FSM;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
+import com.ntnu.tdt4215.query.MultifieldQueryFactory;
 import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
-import com.ntnu.tdt4215.query.WhiteSpaceQueryFactory;
 
 
 public class NLHIcd10 extends SearchEngine {
 	private QueryFactory norwegianQPF;
-	private QueryFactory whiteSpaceQPF;
+	private MultifieldQueryFactory multifieldQPF;
+	private MergingManager idxIcd10;
+	private IndexManager idxATC;
+	private SimpleManager idxNLH;
+	private SimpleManager idxNLHIcd10;
 	private static final File INDEXNLH = new File("indexes/NLH");
 	private static final File INDEXICD10 = new File("indexes/icd10");
 	private static final File INDEXNLHICD10 = new File("indexes/NLHicd10");
 	private static final File INDEXATC = new File("indexes/atc");
-	private static final int NBHITS_ICD = 1;
 
 	public NLHIcd10() throws IOException {
 		super();
@@ -44,37 +47,47 @@ public class NLHIcd10 extends SearchEngine {
 
 	private void createQPFs() {
 		norwegianQPF = new NorwegianQueryFactory();
-		whiteSpaceQPF = new WhiteSpaceQueryFactory();
+		multifieldQPF = new MultifieldQueryFactory();
 	}
 	
 	private void createManagers() throws IOException {
 		Directory dirIcd10 = new SimpleFSDirectory(INDEXICD10);
-		IndexManager idxIcd10 = new MergingManager(dirIcd10, norwegianQPF, new SentenceQueryPolicy(2));
+		idxIcd10 = new MergingManager(dirIcd10, norwegianQPF);
 		addIndex("icd10", idxIcd10);
 		Directory dirATC = new SimpleFSDirectory(INDEXATC);
-		IndexManager idxATC = new MergingManager(dirATC, norwegianQPF, new SentenceQueryPolicy(0));
+		idxATC = new MergingManager(dirATC, norwegianQPF);
 		addIndex("atc", idxATC);
 		
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);
-		IndexManager idxNLH = new SimpleManager(dirNLH, norwegianQPF);
+		idxNLH = new SimpleManager(dirNLH, norwegianQPF);
 		addIndex("NLH", idxNLH);
 		Directory dirNLHIcd10 = new SimpleFSDirectory(INDEXNLHICD10);
-		IndexManager idxNLHIcd10 = new SimpleManager(dirNLHIcd10, whiteSpaceQPF);
+		idxNLHIcd10 = new SimpleManager(dirNLHIcd10, multifieldQPF);
 		addIndex("NLHicd10", idxNLHIcd10);
 	}
 
 	public Collection<ScoredDocument> getResults(int nbHits, String querystr)
 			throws IOException, ParseException {
-		Collection<ScoredDocument> docs = getIndex("icd10").getResults(NBHITS_ICD, querystr);
+		multifieldQPF.extractFields(idxNLHIcd10.getReader());
+		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.5f));
+		Collection<ScoredDocument> docs = idxIcd10.getResults(2, querystr);
 		Collection<ScoredDocument> icdChapters = null;
+		String queryIcd = "";
 		if (docs.size() > 0) {
-			String queryIcd = "";
 			for (ScoredDocument d : docs) {
 				queryIcd += d.getField("id") + " ";
 			}
-			icdChapters = getIndex("NLHicd10").getResults(nbHits, queryIcd);
+			icdChapters = idxNLHIcd10.getResults(nbHits, queryIcd);
 		}
-		Collection<ScoredDocument> chapters = getIndex("NLH").getResults(nbHits * 4, querystr);
+		// Usefull to see how much icd contributes to the overall result
+		/*System.out.println("icd" + queryIcd);
+		if (icdChapters != null) {
+			for (ScoredDocument d: icdChapters) {
+				System.out.print(d + "/");
+			}
+			System.out.println();
+		}*/
+		Collection<ScoredDocument> chapters = idxNLH.getResults(nbHits * 4, querystr);
 		ArrayList<ScoredDocument> res = new ArrayList<ScoredDocument>(nbHits);
 		for (ScoredDocument sd: chapters) {
 			if (icdChapters != null && icdChapters.contains(sd)) {
@@ -101,20 +114,20 @@ public class NLHIcd10 extends SearchEngine {
 		
 		/*IndexingFSM atcfsm = new AtcFSM("documents/atc_no_ext.ttl");
 		addAll("atc", atcfsm);*/
-		
+		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0f));
 		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM("documents/NLH/T/");
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {
 			NLHChapter chap = (NLHChapter) NLHfsm.next();
 			try {
 				// We look for entries in icd10 that match the chapter
-				Collection<ScoredDocument> res = indexes.get("icd10").getResults(NBHITS_ICD, chap.getContent());
+				Collection<ScoredDocument> res = idxIcd10.getResults(1, chap.getContent());
 				// We add these entries inside an index
 				if (res.size() > 0) {
-					getIndex("NLHicd10").addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
+					idxNLHIcd10.addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
 				}
 				// We add the chapter to the index
-				getIndex("NLH").addDoc(chap.getDocument());
+				idxNLH.addDoc(chap.getDocument());
 			} catch (ParseException e) {
 				System.err.println("Couldn't parse properly" + chap.getTitle() +
 									". This chapter won't be indexed");
