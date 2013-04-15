@@ -15,10 +15,8 @@ import com.ntnu.tdt4215.document.NLHChapter;
 import com.ntnu.tdt4215.document.NLHIcd10s;
 import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.index.SentenceQueryPolicy;
-import com.ntnu.tdt4215.index.manager.IndexManager;
 import com.ntnu.tdt4215.index.manager.MergingManager;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
-import com.ntnu.tdt4215.parser.AtcFSM;
 import com.ntnu.tdt4215.parser.Icd10FSM;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
@@ -31,13 +29,11 @@ public class NLHIcd10 extends SearchEngine {
 	private QueryFactory norwegianQPF;
 	private MultifieldQueryFactory multifieldQPF;
 	private MergingManager idxIcd10;
-	private IndexManager idxATC;
 	private SimpleManager idxNLH;
 	private SimpleManager idxNLHIcd10;
 	private static final File INDEXNLH = new File("indexes/NLH");
 	private static final File INDEXICD10 = new File("indexes/icd10");
 	private static final File INDEXNLHICD10 = new File("indexes/NLHicd10");
-	private static final File INDEXATC = new File("indexes/atc");
 
 	public NLHIcd10() throws IOException {
 		super();
@@ -54,9 +50,6 @@ public class NLHIcd10 extends SearchEngine {
 		Directory dirIcd10 = new SimpleFSDirectory(INDEXICD10);
 		idxIcd10 = new MergingManager(dirIcd10, norwegianQPF);
 		addIndex("icd10", idxIcd10);
-		Directory dirATC = new SimpleFSDirectory(INDEXATC);
-		idxATC = new MergingManager(dirATC, norwegianQPF);
-		addIndex("atc", idxATC);
 		
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);
 		idxNLH = new SimpleManager(dirNLH, norwegianQPF);
@@ -111,7 +104,6 @@ public class NLHIcd10 extends SearchEngine {
 		deleteDirectory(INDEXNLH);
 		deleteDirectory(INDEXICD10);
 		deleteDirectory(INDEXNLHICD10);
-		deleteDirectory(INDEXATC);
 	}
 
 	@Override
@@ -119,8 +111,6 @@ public class NLHIcd10 extends SearchEngine {
 		IndexingFSM icd10fsm = new Icd10FSM("documents/icd10no.owl");
 		addAll("icd10", icd10fsm);
 		
-		/*IndexingFSM atcfsm = new AtcFSM("documents/atc_no_ext.ttl");
-		addAll("atc", atcfsm);*/
 		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0f));
 		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM("documents/NLH/T/");
 		NLHfsm.initialize();
