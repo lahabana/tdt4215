@@ -69,17 +69,21 @@ public class NLHIcd10 extends SearchEngine {
 	public Collection<ScoredDocument> getResults(int nbHits, String querystr)
 			throws IOException, ParseException {
 		multifieldQPF.extractFields(idxNLHIcd10.getReader());
+		
+		// Get all the icd entries that are close to the patient case
 		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.5f));
 		Collection<ScoredDocument> docs = idxIcd10.getResults(2, querystr);
 		Collection<ScoredDocument> icdChapters = null;
 		String queryIcd = "";
+		// If they are icd entries well look for the entries that we have 
+		// linked to a chapter
 		if (docs.size() > 0) {
 			for (ScoredDocument d : docs) {
 				queryIcd += d.getField("id") + " ";
 			}
 			icdChapters = idxNLHIcd10.getResults(nbHits, queryIcd);
 		}
-		// Usefull to see how much icd contributes to the overall result
+		// Useful to see how much icd contributes to the overall result
 		/*System.out.println("icd" + queryIcd);
 		if (icdChapters != null) {
 			for (ScoredDocument d: icdChapters) {
@@ -87,14 +91,17 @@ public class NLHIcd10 extends SearchEngine {
 			}
 			System.out.println();
 		}*/
+		// Search for chapters matching the patient case
 		Collection<ScoredDocument> chapters = idxNLH.getResults(nbHits * 4, querystr);
 		ArrayList<ScoredDocument> res = new ArrayList<ScoredDocument>(nbHits);
+		// For each document retrieved by full text we increase its ranking if it also appeared in ICD
 		for (ScoredDocument sd: chapters) {
 			if (icdChapters != null && icdChapters.contains(sd)) {
 				sd.setScore(sd.getScore() + 0.1f);// Probably add some sort of reinforcement here
 			}
 			res.add(sd);
 		}
+		// Sort the final results
 		Collections.sort(res, Collections.reverseOrder());
 		return res;
 	}
