@@ -75,7 +75,7 @@ public class NLHIcd10 extends SearchEngine {
 		Collection<ScoredDocument> docs = idxIcd10.getResults(2, querystr);
 		Collection<ScoredDocument> icdChapters = null;
 		String queryIcd = "";
-		// If they are icd entries well look for the entries that we have 
+		// If there are icd entries well look for the entries that we have 
 		// linked to a chapter
 		if (docs.size() > 0) {
 			for (ScoredDocument d : docs) {
