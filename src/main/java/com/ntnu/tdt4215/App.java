@@ -4,8 +4,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import com.ntnu.tdt4215.document.ScoredDocument;
-import com.ntnu.tdt4215.searchEngine.SearchEngine;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -16,41 +14,76 @@ import java.util.Iterator;
 
 public class App {
 	
-	private static final int MAXDOCS = 5;
-	static SearchEngine manager;
+	private static int nbHits = 5;
+	static com.ntnu.tdt4215.searchEngine.NLHIcd10 manager;
 	static PrintStream stdout;
 	
 	public static void main(String[] args) throws ParseException, IOException {
 		stdout = new PrintStream(System.out, true, "UTF-8");
 		System.setOut(stdout);
 		manager = new com.ntnu.tdt4215.searchEngine.NLHIcd10();
-		//manager = new com.ntnu.tdt4215.searchEngine.NLH();
-		
-		// We clean the folder containing the index
-    	if (args.length == 1 && args[0].equals("--clean")) {
+
+		//nothing is specified we just launch the GUI
+		if (args.length == 0) {
+			launchGui();
+			return;
+		}
+		if (args[0].equals("--clean")) {
     		try {
 				manager.clean();
+				return;
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
-				System.exit(-1);
+				System.exit(2);
 			}
-    	} else if (args.length == 1 && args[0].equals("--index")) {
+		}
+    	if (args[0].equals("--index")) {
     		// We want to index all accessible documents
     		try {
 				manager.indexAll();
+				return;
 			} catch (IOException e) {
 				System.err.println("An error occured while indexing");
-				System.exit(-2);
+				System.exit(2);
 			}
-    	} else if(args.length == 1 && args[0].equals("--search")) {
-    		// We want to search the index
-    		searchLoop();
-    	} else {
-    		// Invalid entry we show the help
-    		showHelp();
     	}
+	    
+    	// We are going to do a search
+    	if (args.length > 1 && !extractOptions(args)) {
+	    	showHelp();
+	    	System.exit(1);
+	    }
+		if (args[0].equals("--search")) {
+			searchLoop();
+			return;
+		}
+		if (args[0].equals("--gui")) {
+			launchGui();
+			return;
+		}
+		showHelp();
+		System.exit(1);
     }
 	
+	/**
+	 * Launch the Graphic user interface
+	 */
+	private static void launchGui() {
+		// TODO Auto-generated method stub
+		System.out.println("TODO Gui");
+	}
+
+	private static boolean extractOptions(String[] args) {
+		if (args.length != 5) {
+			return false;
+		}
+		nbHits = Integer.parseInt(args[1]);
+		manager.factor_hits_icd = Integer.parseInt(args[2]);
+		manager.factor_hits_icd = Integer.parseInt(args[3]);
+		manager.boost_icd = Float.parseFloat(args[4]);
+		return true;
+	}
+
 	/**
 	 * Creates a loop that will ask for the user to enter a filename to send 
 	 * @throws IOException
@@ -83,6 +116,8 @@ public class App {
 		System.out.println("\t\t--index: index documents");
 		System.out.println("\t\t--search start the program to search the index");
 		System.out.println("\t\t--clean: empty the index");
+		System.out.println("\t\t--gui: launch the gui to search (the documents must already have been indexed)");
+		System.out.println("\twhen searching or using the GUI after the first option you can add options specific to the search engine");
 	}
 	
 	/**
@@ -97,11 +132,11 @@ public class App {
 			System.err.println("Can't read the file: " + line);
 		} else {
     		String contents = FileUtils.readFileToString(f, Charset.forName("UTF-8"));
-    		Collection<ScoredDocument> docs = manager.getResults(MAXDOCS, contents);
+    		Collection<ScoredDocument> docs = manager.getResults(nbHits, contents);
     		System.out.println("Matches:");
     		Iterator<ScoredDocument> it = docs.iterator();
     		int i = 0;
-    		while (it.hasNext() && i < MAXDOCS) {
+    		while (it.hasNext() && i < nbHits) {
     			ScoredDocument doc = it.next();
     			System.out.println(/*doc.getScore() + */doc.getField("title"));
     			i++;
