@@ -12,8 +12,10 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 import com.ntnu.tdt4215.document.NLHChapter;
+import com.ntnu.tdt4215.document.NLHIcd10Inline;
 import com.ntnu.tdt4215.document.NLHIcd10s;
 import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.index.SentenceCountQueryPolicy;
 import com.ntnu.tdt4215.index.SentenceQueryPolicy;
 import com.ntnu.tdt4215.index.manager.MergingManager;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
@@ -23,11 +25,13 @@ import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.query.MultifieldQueryFactory;
 import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
+import com.ntnu.tdt4215.query.WhiteSpaceQueryFactory;
 
 
 public class NLHIcd10 extends SearchEngine {
 	private QueryFactory norwegianQPF;
 	private MultifieldQueryFactory multifieldQPF;
+	private WhiteSpaceQueryFactory whitespaceQPF;
 	private MergingManager idxIcd10;
 	private SimpleManager idxNLH;
 	private SimpleManager idxNLHIcd10;
@@ -44,6 +48,7 @@ public class NLHIcd10 extends SearchEngine {
 	private void createQPFs() {
 		norwegianQPF = new NorwegianQueryFactory();
 		multifieldQPF = new MultifieldQueryFactory();
+		whitespaceQPF = new WhiteSpaceQueryFactory();
 	}
 	
 	private void createManagers() throws IOException {
@@ -54,44 +59,74 @@ public class NLHIcd10 extends SearchEngine {
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);
 		idxNLH = new SimpleManager(dirNLH, norwegianQPF);
 		addIndex("NLH", idxNLH);
+		
 		Directory dirNLHIcd10 = new SimpleFSDirectory(INDEXNLHICD10);
-		idxNLHIcd10 = new SimpleManager(dirNLHIcd10, multifieldQPF);
+		idxNLHIcd10 = new SimpleManager(dirNLHIcd10, whitespaceQPF);//multifieldQPF);
 		addIndex("NLHicd10", idxNLHIcd10);
 	}
 
 	public Collection<ScoredDocument> getResults(int nbHits, String querystr)
 			throws IOException, ParseException {
 		multifieldQPF.extractFields(idxNLHIcd10.getReader());
-		
+		// Get the most relevant chapters according to the ICD entries
+		Collection<ScoredDocument> icdMatches = getNLHChaptersFromIcd(nbHits, querystr);
+		// Get the most relevant ICD chapters in fulltext search
+		Collection<ScoredDocument> chapters = idxNLH.getResults(nbHits * 4, querystr);
+		// Merge both results
+		return mergeResults(chapters, icdMatches);
+	}
+
+	/**
+	 * Returns the NLH chapters that match the best the query string depending on the icd
+	 * @param nbHits
+	 * @param querystr
+	 * @return
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public Collection<ScoredDocument> getNLHChaptersFromIcd(int nbHits, String querystr) throws IOException, ParseException {
 		// Get all the icd entries that are close to the patient case
-		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.2f));
+		//idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.2f));
+		idxIcd10.setQueryPolicy(new SentenceCountQueryPolicy());
+		
 		Collection<ScoredDocument> docs = idxIcd10.getResults(1, querystr);
 		Collection<ScoredDocument> icdChapters = null;
 		String queryIcd = "";
 		// If there are icd entries well look for the entries that we have 
 		// linked to a chapter
 		if (docs.size() > 0) {
-			for (ScoredDocument d : docs) {
+			/*for (ScoredDocument d : docs) {
 				queryIcd += d.getField("id") + " ";
 				System.out.print(d + "/");
 			}
-			System.out.println();
+			System.out.println();*/
+			if (docs.size() > 0) {
+				for (ScoredDocument d : docs) {
+					float score = d.getScore();
+					String id = d.getField("id");
+					for (int i = 0; i < score; i++) {
+						queryIcd += id + " ";
+					}
+				}
+			}
 			icdChapters = idxNLHIcd10.getResults(nbHits, queryIcd);
 		}
-		// Useful to see how much icd contributes to the overall result
-		if (icdChapters != null) {
-			for (ScoredDocument d: icdChapters) {
-				System.out.print(d + "/");
-			}
-			System.out.println();
-		}
-		// Search for chapters matching the patient case
-		Collection<ScoredDocument> chapters = idxNLH.getResults(nbHits * 4, querystr);
-		ArrayList<ScoredDocument> res = new ArrayList<ScoredDocument>(nbHits);
+		return icdChapters;
+	}
+	
+	/**
+	 * Take two collection and merge them together and return a sorted collection of results
+	 * @param chapters
+	 * @param icdMatches
+	 * @return
+	 */
+	private Collection<ScoredDocument> mergeResults(Collection<ScoredDocument> chapters,
+			Collection<ScoredDocument> icdMatches) {
+		ArrayList<ScoredDocument> res = new ArrayList<ScoredDocument>();
 		// For each document retrieved by full text we increase its ranking if it also appeared in ICD
 		for (ScoredDocument sd: chapters) {
-			if (icdChapters != null && icdChapters.contains(sd)) {
-				sd.setScore(sd.getScore()* 1.2f);// Probably add some sort of reinforcement here
+			if (icdMatches != null && icdMatches.contains(sd)) {
+				sd.setScore(100);//sd.getScore()* 5f);// Probably add some sort of reinforcement here
 			}
 			res.add(sd);
 		}
@@ -112,7 +147,8 @@ public class NLHIcd10 extends SearchEngine {
 		IndexingFSM icd10fsm = new Icd10FSM("documents/icd10no.owl");
 		addAll("icd10", icd10fsm);
 		
-		idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.8f));
+		//idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.8f));
+		idxIcd10.setQueryPolicy(new SentenceCountQueryPolicy());
 		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM("documents/NLH/T/");
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {
@@ -122,7 +158,8 @@ public class NLHIcd10 extends SearchEngine {
 				Collection<ScoredDocument> res = idxIcd10.getResults(1, chap.getContent());
 				// We add these entries inside an index
 				if (res.size() > 0) {
-					idxNLHIcd10.addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
+					//idxNLHIcd10.addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
+					idxNLHIcd10.addDoc(new NLHIcd10Inline(chap.getTitle(), res).getDocument());
 				}
 				// We add the chapter to the index
 				idxNLH.addDoc(chap.getDocument());
