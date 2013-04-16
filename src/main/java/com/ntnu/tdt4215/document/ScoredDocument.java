@@ -58,7 +58,11 @@ public class ScoredDocument implements Comparable<ScoredDocument> {
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof ScoredDocument) {
-			return doc.get("id") == ((ScoredDocument) o).doc.get("id");
+			String id = doc.get("id");
+			if (id == null) {
+				return doc.get("title").equals(((ScoredDocument) o).doc.get("title"));				
+			}
+			return doc.get("id").equals(((ScoredDocument) o).doc.get("id"));
 		}
 		return false;
 	}
