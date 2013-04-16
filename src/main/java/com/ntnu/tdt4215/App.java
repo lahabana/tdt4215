@@ -79,7 +79,7 @@ public class App {
 		}
 		nbHits = Integer.parseInt(args[1]);
 		manager.factor_hits_icd = Integer.parseInt(args[2]);
-		manager.factor_hits_icd = Integer.parseInt(args[3]);
+		manager.factor_hits_ft = Integer.parseInt(args[3]);
 		manager.boost_icd = Float.parseFloat(args[4]);
 		return true;
 	}
