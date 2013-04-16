@@ -62,7 +62,7 @@ public class Icd10Class implements OwlClass {
 	    	content += " " + propertyStmt.getString();
 	    }
 	    
-	    /*if (subject.hasProperty(RDFS.subClassOf)) {
+	    if (subject.hasProperty(RDFS.subClassOf)) {
 	    	Statement subclass = subject.getProperty(RDFS.subClassOf);
 	    	boolean stop = false;
 	    	while(!stop) {
@@ -78,7 +78,7 @@ public class Icd10Class implements OwlClass {
 		    		}
 		    	}
 	    	}
-	    }*/
+	    }
 	}
 		
 	public Document getDocument() {
