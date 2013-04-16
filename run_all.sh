@@ -3,10 +3,11 @@ JAR="target/com.ntnu.tdt4215-0.0.1-jar-with-dependencies.jar"
 DIR="patientCase/"
 
 function usage {
-  echo "usage $1 --run|evaluate jar-file query-folder
+  echo "usage $1 --run|evaluate|evaluateMany jar-file query-folder
 This script launches the program on each patient case
-  If the first argument is --run it just runs and display the result
-  Otherwise it runs and display some statistics
+  --run: it just runs and display the result
+  --evaluate runs and display some statistics
+  --evaluate-many runs many times with different parameters and display some stats
 
   jar-file: the fully packages jar that contains the program
             (mvn clean compile assembly:single should help)
@@ -22,7 +23,7 @@ function evaluate {
     # The tr puts everything on a single line
     # The second tr replaces every 'Matches:' by a line end
     # we then remove the starting space and the first endline
-    (find "$DIR"*.txt; echo "") | java -jar "$JAR" --search \
+    (find "$DIR"*.txt; echo "") | java -jar "$JAR" --search $@ \
                 | grep -E '(^[A-Z][0-9].*$|^Matches:)' \
                 | sed -E 's/^([A-Z]([0-9]\.?)+).*$/\1/g' \
                 | tr -s '\n' ' ' \
@@ -33,6 +34,20 @@ function evaluate {
 
     # launch the R script that computes stats with the gold standard
     Rscript "evaluate.R" "res.txt" "gs.txt"
+}
+
+function evaluateMany {
+    for NHITS in 5; do
+        for FICD in 8; do
+            for FFT in 4; do
+                for BOOST in 0.5; do
+                    echo "Evaluating with parameters:" $NHITS $FICD $FFT $BOOST
+                    evaluate $NHITS $FICD $FFT $BOOST
+                done
+            done
+        done
+    done
+
 }
 
 if [ $# -eq 1 -o $# -eq 3 ]; then
@@ -50,6 +65,8 @@ if [ $# -eq 1 -o $# -eq 3 ]; then
         evaluate
     elif [ "$1" = "--run" ]; then
         (find "$DIR"*.txt; echo "") | java -jar "$JAR" --search
+    elif [ "$1" = "--evaluate-many" ]; then
+        evaluateMany
     else
         usage $0
     fi
