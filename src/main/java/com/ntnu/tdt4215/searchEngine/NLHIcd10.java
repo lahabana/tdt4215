@@ -12,66 +12,67 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 import com.ntnu.tdt4215.document.NLHChapter;
-import com.ntnu.tdt4215.document.NLHIcd10Inline;
-import com.ntnu.tdt4215.document.NLHIcd10s;
 import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.document.factory.NLHIcd10Factory;
+import com.ntnu.tdt4215.document.factory.NLHIcd10InlineFactory;
+import com.ntnu.tdt4215.index.MultipleQueryPolicy;
 import com.ntnu.tdt4215.index.SentenceCountQueryPolicy;
-import com.ntnu.tdt4215.index.SentenceQueryPolicy;
 import com.ntnu.tdt4215.index.manager.MergingManager;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.Icd10FSM;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
-import com.ntnu.tdt4215.query.MultifieldQueryFactory;
 import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
-import com.ntnu.tdt4215.query.WhiteSpaceQueryFactory;
 
 
 public class NLHIcd10 extends SearchEngine {
-	private QueryFactory norwegianQPF;
-	private MultifieldQueryFactory multifieldQPF;
-	private WhiteSpaceQueryFactory whitespaceQPF;
 	private MergingManager idxIcd10;
 	private SimpleManager idxNLH;
 	private SimpleManager idxNLHIcd10;
+
 	private static final File INDEXNLH = new File("indexes/NLH");
 	private static final File INDEXICD10 = new File("indexes/icd10");
 	private static final File INDEXNLHICD10 = new File("indexes/NLHicd10");
 
+	// Part interesting to configure
+	// The way the NLHIcd associations documents are stored in the lucene index
+	public NLHIcd10Factory NLHIcd10F = new NLHIcd10InlineFactory(); // NLHIcd10sFactory();
+	// The way we split a large document in sentences and return scored results
+	public MultipleQueryPolicy icd10MQP = new SentenceCountQueryPolicy(); //new SentenceQueryPolicy(0.2f);
+	// The query factory for fulltext text (patientCase, chapters...)
+	public QueryFactory fulltextQPF = new NorwegianQueryFactory();
+	// The multiplicative factor in the number of results retrieved on the NLHIcd associations
+	public int factor_hits_icd = 1;
+	// The multiplicative factor in the number of results retrieved on the Fulltext search
+	public int factor_hits_ft = 4;
+	// How much to increase the score of a NLH Chapter that is retrieved by both methods
+	public float boost_icd = 0.5f;
+	
 	public NLHIcd10() throws IOException {
 		super();
-		createQPFs();
-		createManagers();
-	}
-
-	private void createQPFs() {
-		norwegianQPF = new NorwegianQueryFactory();
-		multifieldQPF = new MultifieldQueryFactory();
-		whitespaceQPF = new WhiteSpaceQueryFactory();
-	}
-	
-	private void createManagers() throws IOException {
+		// Create the managers
 		Directory dirIcd10 = new SimpleFSDirectory(INDEXICD10);
-		idxIcd10 = new MergingManager(dirIcd10, norwegianQPF);
+		idxIcd10 = new MergingManager(dirIcd10, fulltextQPF);
 		addIndex("icd10", idxIcd10);
+		idxIcd10.setQueryPolicy(icd10MQP);
 		
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);
-		idxNLH = new SimpleManager(dirNLH, norwegianQPF);
+		idxNLH = new SimpleManager(dirNLH, fulltextQPF);
 		addIndex("NLH", idxNLH);
 		
 		Directory dirNLHIcd10 = new SimpleFSDirectory(INDEXNLHICD10);
-		idxNLHIcd10 = new SimpleManager(dirNLHIcd10, whitespaceQPF);//multifieldQPF);
+		idxNLHIcd10 = new SimpleManager(dirNLHIcd10, NLHIcd10F.getQueryFactory());
 		addIndex("NLHicd10", idxNLHIcd10);
 	}
 
 	public Collection<ScoredDocument> getResults(int nbHits, String querystr)
 			throws IOException, ParseException {
-		multifieldQPF.extractFields(idxNLHIcd10.getReader());
+		NLHIcd10F.getQueryFactory().prepare(idxNLHIcd10.getReader());
 		// Get the most relevant chapters according to the ICD entries
-		Collection<ScoredDocument> icdMatches = getNLHChaptersFromIcd(nbHits, querystr);
+		Collection<ScoredDocument> icdMatches = getNLHChaptersFromIcd(nbHits * factor_hits_icd, querystr);
 		// Get the most relevant ICD chapters in fulltext search
-		Collection<ScoredDocument> chapters = idxNLH.getResults(nbHits * 4, querystr);
+		Collection<ScoredDocument> chapters = idxNLH.getResults(nbHits * factor_hits_ft, querystr);
 		// Merge both results
 		return mergeResults(chapters, icdMatches);
 	}
@@ -85,10 +86,6 @@ public class NLHIcd10 extends SearchEngine {
 	 * @throws ParseException
 	 */
 	public Collection<ScoredDocument> getNLHChaptersFromIcd(int nbHits, String querystr) throws IOException, ParseException {
-		// Get all the icd entries that are close to the patient case
-		//idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.2f));
-		idxIcd10.setQueryPolicy(new SentenceCountQueryPolicy());
-		
 		Collection<ScoredDocument> docs = idxIcd10.getResults(1, querystr);
 		Collection<ScoredDocument> icdChapters = null;
 		String queryIcd = "";
@@ -126,7 +123,7 @@ public class NLHIcd10 extends SearchEngine {
 		// For each document retrieved by full text we increase its ranking if it also appeared in ICD
 		for (ScoredDocument sd: chapters) {
 			if (icdMatches != null && icdMatches.contains(sd)) {
-				sd.setScore(100);//sd.getScore()* 5f);// Probably add some sort of reinforcement here
+				sd.setScore(sd.getScore() + boost_icd);// Probably add some sort of reinforcement here
 			}
 			res.add(sd);
 		}
@@ -147,8 +144,6 @@ public class NLHIcd10 extends SearchEngine {
 		IndexingFSM icd10fsm = new Icd10FSM("documents/icd10no.owl");
 		addAll("icd10", icd10fsm);
 		
-		//idxIcd10.setQueryPolicy(new SentenceQueryPolicy(0.8f));
-		idxIcd10.setQueryPolicy(new SentenceCountQueryPolicy());
 		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM("documents/NLH/T/");
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {
@@ -159,7 +154,7 @@ public class NLHIcd10 extends SearchEngine {
 				// We add these entries inside an index
 				if (res.size() > 0) {
 					//idxNLHIcd10.addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
-					idxNLHIcd10.addDoc(new NLHIcd10Inline(chap.getTitle(), res).getDocument());
+					idxNLHIcd10.addDoc(NLHIcd10F.create(chap.getTitle(), res).getDocument());
 				}
 				// We add the chapter to the index
 				idxNLH.addDoc(chap.getDocument());
