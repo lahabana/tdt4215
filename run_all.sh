@@ -1,4 +1,6 @@
 #!/bin/bash
+JAR="target/com.ntnu.tdt4215-0.0.1-jar-with-dependencies.jar"
+DIR="patientCase/"
 
 function usage {
   echo "usage $1 --run|evaluate jar-file query-folder
@@ -33,9 +35,11 @@ function evaluate {
     Rscript "evaluate.R" "res.txt" "gs.txt"
 }
 
-if [ $# -eq 3 ]; then
-    JAR="$2"
-    DIR="$3"
+if [ $# -eq 1 -o $# -eq 3 ]; then
+    if [ $# -eq 3 ]; then
+        JAR="$2"
+        DIR="$3"
+    fi
     echo "cleaning the old index"
     java -jar "$JAR" --clean
     echo "creating the new index"
