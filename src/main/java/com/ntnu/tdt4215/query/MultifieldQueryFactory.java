@@ -47,7 +47,15 @@ public class MultifieldQueryFactory implements QueryFactory {
 		return analyzer;
 	}
 
-	public void extractFields(IndexReader reader) {
+	public void prepare(IndexReader reader) {
+		extractFields(reader);
+	}
+	
+	/**
+	 * Extract the fields that exist in the index
+	 * @param reader
+	 */
+	protected void extractFields(IndexReader reader) {
 		if (fields == null) { // To guarantee we only do this once
 			FieldInfos fi = MultiFields.getMergedFieldInfos(reader);
 			fields = new String[fi.size()];

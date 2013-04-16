@@ -1,6 +1,7 @@
 package com.ntnu.tdt4215.query;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.Version;
@@ -29,5 +30,10 @@ public interface QueryFactory {
 	 * @return
 	 */
 	public Analyzer getAnalyzer();
+	
+	/**
+	 * Do what is needed to prepare the query factory 
+	 */
+	public void prepare(IndexReader reader);
 
 }

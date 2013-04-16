@@ -1,6 +1,7 @@
 package com.ntnu.tdt4215.query;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
@@ -25,5 +26,8 @@ abstract public class ContentQueryFactory implements QueryFactory {
 	public Analyzer getAnalyzer() {
 		return analyzer;
 	}
-
+	
+	public void prepare(IndexReader reader) {
+		return;
+	}
 }
