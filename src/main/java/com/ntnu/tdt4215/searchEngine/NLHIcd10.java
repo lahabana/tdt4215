@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -66,6 +65,7 @@ public class NLHIcd10 extends SearchEngine {
 		addIndex("NLHicd10", idxNLHIcd10);
 	}
 
+	@Override
 	public Collection<ScoredDocument> getResults(int nbHits, String querystr)
 			throws IOException, ParseException {
 		NLHIcd10F.getQueryFactory().prepare(idxNLHIcd10.getReader());
@@ -169,23 +169,6 @@ public class NLHIcd10 extends SearchEngine {
 		IndexingFSM NLHfsm3 = new NLHWebsiteCrawlerFSM("documents/NLH/G/");
 		addAll("NLH", NLHfsm3);
 		this.closeWriter();
-	}
-	
-	/**
-	 * delete the index present at file
-	 * @param file
-	 * @throws IOException
-	 */
-	private void deleteDirectory(File file) throws IOException {
-		if (file.exists() && file.isDirectory()) {
-			if (file.canWrite()) {
-				FileUtils.deleteDirectory(file);
-			} else {
-				throw new IOException("Can't delete the directory:" + file.getAbsolutePath());
-			}
-		} else if(file.exists() && !file.isDirectory()) {
-			throw new IOException("Can't delete:" + file.getAbsolutePath() + " it is not a directory");
-		}
 	}
 
 }

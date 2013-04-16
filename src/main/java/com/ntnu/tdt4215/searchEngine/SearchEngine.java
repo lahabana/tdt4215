@@ -1,9 +1,11 @@
 package com.ntnu.tdt4215.searchEngine;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Hashtable;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import com.ntnu.tdt4215.document.ScoredDocument;
@@ -83,6 +85,23 @@ abstract public class SearchEngine {
 	public void closeReader() throws IOException {
 		for (String key : indexes.keySet()) {
 			indexes.get(key).closeReader();
+		}
+	}
+
+	/**
+	 * delete the index present at file
+	 * @param file
+	 * @throws IOException
+	 */
+	protected void deleteDirectory(File file) throws IOException {
+		if (file.exists() && file.isDirectory()) {
+			if (file.canWrite()) {
+				FileUtils.deleteDirectory(file);
+			} else {
+				throw new IOException("Can't delete the directory:" + file.getAbsolutePath());
+			}
+		} else if(file.exists() && !file.isDirectory()) {
+			throw new IOException("Can't delete:" + file.getAbsolutePath() + " it is not a directory");
 		}
 	}
 }

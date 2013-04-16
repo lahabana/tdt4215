@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -42,15 +41,7 @@ public class NLH extends SearchEngine {
 
 	@Override
 	public void clean() throws IOException {
-		if (FILE.exists() && FILE.isDirectory()) {
-			if (FILE.canWrite()) {
-				FileUtils.deleteDirectory(FILE);
-			} else {
-				throw new IOException("Can't delete the directory:" + FILE.getAbsolutePath());
-			}
-		} else if(FILE.exists() && !FILE.isDirectory()) {
-			throw new IOException("Can't delete:" + FILE.getAbsolutePath() + " it is not a directory");
-		}
+		deleteDirectory(FILE);
 	}
 
 	@Override
