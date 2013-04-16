@@ -1,5 +1,7 @@
 package com.ntnu.tdt4215.document;
 
+import java.util.Collection;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
@@ -9,8 +11,10 @@ public class NLHChapter implements IndexableDocument {
 	protected Document document;
 	String title;
 	String content;
+	String icd;
 	static FieldType ftContent = new FieldType();
 	static FieldType ftTitle = new FieldType();
+	static FieldType ftIcd = new FieldType();
 
 	static {
 		ftTitle.setStored(true);
@@ -19,6 +23,9 @@ public class NLHChapter implements IndexableDocument {
 		ftContent.setStored(false);
 		ftContent.setTokenized(true);
 		ftContent.setIndexed(true);
+		ftIcd.setStored(true);
+		ftIcd.setIndexed(true);
+		ftIcd.setTokenized(true);
 	}
 	
 	public NLHChapter() {
@@ -41,6 +48,20 @@ public class NLHChapter implements IndexableDocument {
 		document.add(new Field("content", content, ftContent));
 	}
 	
+	public void setIcd(Collection<ScoredDocument> icdEntries) {
+		String res = "";
+		for (ScoredDocument d: icdEntries) {
+			float score = d.getScore();
+			String id = d.getField("id");
+			for (int i = 0; i < score; i++) {
+				res += id + " ";
+			}
+		}
+		Field f = new Field("icd", res, ftIcd);
+		document.add(f);
+		this.icd = res;
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -49,6 +70,10 @@ public class NLHChapter implements IndexableDocument {
 		return content;
 	}
 	
+	public String getIcd() {
+		return icd;
+	}
+
 	public Document getDocument() {
 		return document;
 	}
