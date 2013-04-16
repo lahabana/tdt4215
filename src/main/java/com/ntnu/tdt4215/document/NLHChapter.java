@@ -9,6 +9,17 @@ public class NLHChapter implements IndexableDocument {
 	protected Document document;
 	String title;
 	String content;
+	static FieldType ftContent = new FieldType();
+	static FieldType ftTitle = new FieldType();
+
+	static {
+		ftTitle.setStored(true);
+		ftTitle.setTokenized(true);
+		ftTitle.setIndexed(true);
+		ftContent.setStored(false);
+		ftContent.setTokenized(true);
+		ftContent.setIndexed(true);
+	}
 	
 	public NLHChapter() {
 		document = new Document();
@@ -22,20 +33,12 @@ public class NLHChapter implements IndexableDocument {
 	
 	protected void setTitle(String title) {
 		this.title = title;
-		FieldType ft = new FieldType();
-		ft.setStored(true);
-		ft.setTokenized(true);
-		ft.setIndexed(true);
-		document.add(new Field("title", title, ft));
+		document.add(new Field("title", title, ftTitle));
 	}
 	
 	protected void setContent(String content) {
 		this.content = content;
-		FieldType ft = new FieldType();
-		ft.setStored(false);
-		ft.setTokenized(true);
-		ft.setIndexed(true);
-		document.add(new Field("content", content, ft));
+		document.add(new Field("content", content, ftContent));
 	}
 	
 	public String getTitle() {
