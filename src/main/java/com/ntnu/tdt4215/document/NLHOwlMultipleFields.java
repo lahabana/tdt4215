@@ -8,10 +8,10 @@ import org.apache.lucene.document.Field;
  * A document that holds the ICD10 entries that are the most relevant to the chapter
  * and creates a lucene document with each NLH chapter as a different field
  */
-public class NLHIcd10s extends AbstractNLHIcd10 {
+public class NLHOwlMultipleFields extends AbstractNLHIcd10 {
 	public static boolean withBoost = false;
 	
-	public NLHIcd10s(String title, Collection<ScoredDocument> content) {
+	public NLHOwlMultipleFields(String title, Collection<ScoredDocument> content) {
 		super(title, content);
 	}
 

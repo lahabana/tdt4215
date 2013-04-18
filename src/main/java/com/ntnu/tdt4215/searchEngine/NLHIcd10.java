@@ -12,10 +12,10 @@ import org.apache.lucene.store.SimpleFSDirectory;
 
 import com.ntnu.tdt4215.document.NLHChapter;
 import com.ntnu.tdt4215.document.ScoredDocument;
-import com.ntnu.tdt4215.document.factory.Icd10Factory;
+import com.ntnu.tdt4215.document.factory.AtcFactory;
 import com.ntnu.tdt4215.document.factory.NLHFactory;
-import com.ntnu.tdt4215.document.factory.NLHIcd10Factory;
-import com.ntnu.tdt4215.document.factory.NLHIcd10InlineFactory;
+import com.ntnu.tdt4215.document.factory.NLHOwlFactory;
+import com.ntnu.tdt4215.document.factory.NLHOwlInlineFactory;
 import com.ntnu.tdt4215.document.factory.NLHWebsiteFactory;
 import com.ntnu.tdt4215.index.MultipleQueryPolicy;
 import com.ntnu.tdt4215.index.SentenceCountQueryPolicy;
@@ -39,9 +39,9 @@ public class NLHIcd10 extends SearchEngine {
 
 	// Part interesting to configure
 	// The way the NLHIcd associations documents are stored in the lucene index
-	public NLHIcd10Factory NLHIcd10F = new NLHIcd10InlineFactory(); // NLHIcd10sFactory();
+	public NLHOwlFactory NLHIcd10F = new NLHOwlInlineFactory(); // NLHIcd10sFactory();
 	// The way we split a large document in sentences and return scored results
-	public MultipleQueryPolicy icd10MQP = new SentenceCountQueryPolicy(); //new SentenceQueryPolicy(0.2f);
+	public MultipleQueryPolicy sentenceMQP = new SentenceCountQueryPolicy(); //new SentenceQueryPolicy(0.2f);
 	// The query factory for fulltext text (patientCase, chapters...)
 	public QueryFactory fulltextQPF = new NorwegianQueryFactory();
 	// The multiplicative factor in the number of results retrieved on the NLHIcd associations
@@ -57,7 +57,7 @@ public class NLHIcd10 extends SearchEngine {
 		Directory dirIcd10 = new SimpleFSDirectory(INDEXICD10);
 		idxIcd10 = new MergingManager(dirIcd10, fulltextQPF);
 		addIndex("icd10", idxIcd10);
-		idxIcd10.setQueryPolicy(icd10MQP);
+		idxIcd10.setQueryPolicy(sentenceMQP);
 		
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);
 		idxNLH = new SimpleManager(dirNLH, fulltextQPF);
@@ -144,8 +144,8 @@ public class NLHIcd10 extends SearchEngine {
 
 	@Override
 	public void indexAll() throws IOException {
-		IndexingFSM icd10fsm = new OwlFSM("documents/icd10no.owl", new Icd10Factory());
-		addAll("icd10", icd10fsm);
+		IndexingFSM atcfsm = new OwlFSM("documents/atc_no_ext.ttl", new AtcFactory());
+		addAll("atc", atcfsm);
 		
 		String[] folders = {"documents/NLH/T/"};
 		NLHFactory factory = new NLHWebsiteFactory();
@@ -169,6 +169,7 @@ public class NLHIcd10 extends SearchEngine {
 			}
 		}
 		NLHfsm.finish();
+
 		String[] folders2 = {"documents/NLH/L/", "documents/NLH/G/"};
 		IndexingFSM NLHfsm2 = new NLHWebsiteCrawlerFSM(folders2, factory);
 		addAll("NLH", NLHfsm2);

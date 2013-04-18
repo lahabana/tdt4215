@@ -4,53 +4,59 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.rdf.model.Statement;
-import com.hp.hpl.jena.vocabulary.RDFS;
+import com.hp.hpl.jena.ontology.OntClass;
 
 public class AtcClass implements OwlClass {
 
 	String content = "";
 	String id = "";
 	Document document = new Document();
-	static String ns = "http://research.idi.ntnu.no/hilab/ehr/ontologies/icd10no.owl#";
-	static Property code_compacted = ResourceFactory.createProperty(ns + "code_compacted");
-	
-	public AtcClass(Statement stmt) {
-		System.out.println(stmt.getString());
-	    Resource  subject   = stmt.getSubject();// get the subject
-	    Statement labelStmt = subject.getProperty(RDFS.label);
-	    if (labelStmt != null) {
-	    	content = labelStmt.getString();
-	    }
-	    /*Statement codeStmt = subject.getProperty(code_compacted);
-	    if (codeStmt != null) {
-	    	id = codeStmt.getString();
-	    }*/
+	static FieldType ftId = new FieldType();
+	static FieldType ftContent = new FieldType();
+	static {
+		ftId.setStored(true);
+		ftId.setTokenized(false);
+		ftId.setIndexed(false);
+		ftContent.setStored(true);
+		ftContent.setTokenized(true);
+		ftContent.setIndexed(true);
+	}
+
+	public AtcClass(OntClass ontClass) {
+		extractInfo(ontClass);
+		id = ontClass.getLocalName();
+		setId();
 	    setContent();
-	    setId();
-	} 
-		
+	}
+
+	public void extractInfo(OntClass ontClass) {
+	    // get the title
+		String label = ontClass.getLabel("no");
+		content += " " + (label == null ? "" : label);
+		// Extract the parents
+	    OntClass parent = ontClass;
+	    while (parent.hasSuperClass()) {
+	    	parent = parent.getSuperClass();
+	    	String superLabel = parent.getLabel("no");
+		    if (superLabel!= null) {
+		    	content += " " + superLabel;
+		    }
+		    if (parent.getSuperClass().equals(parent)) {
+		    	break;
+		    }
+	    }
+	}
+
 	public Document getDocument() {
 		return document;
 	}
-	
+
 	protected void setContent() {
-		FieldType ft = new FieldType();
-		ft.setStored(false);
-		ft.setTokenized(true);
-		ft.setIndexed(true);
-		document.add(new Field("content", content, ft));
+		document.add(new Field("content", content, ftContent));
 	}
-	
+
 	protected void setId() {
-		FieldType ft = new FieldType();
-		ft.setStored(true);
-		ft.setTokenized(false);
-		ft.setIndexed(false);
-		document.add(new Field("id", id, ft));
+		document.add(new Field("id", id, ftId));
 	}
 
 	public String toString() {

@@ -9,9 +9,9 @@ import org.apache.lucene.document.Field;
  * and creates a lucene document with each NLH chapter in a single field and repeated
  * depending on its score
  */
-public class NLHIcd10Inline extends AbstractNLHIcd10 {
+public class NLHOwlInline extends AbstractNLHIcd10 {
 	
-	public NLHIcd10Inline(String title, Collection<ScoredDocument> content) {
+	public NLHOwlInline(String title, Collection<ScoredDocument> content) {
 		super(title, content);
 	}
 	

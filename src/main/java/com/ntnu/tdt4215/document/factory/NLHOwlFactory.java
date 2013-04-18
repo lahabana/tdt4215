@@ -6,7 +6,7 @@ import com.ntnu.tdt4215.document.AbstractNLHIcd10;
 import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.query.QueryFactory;
 
-public interface NLHIcd10Factory {
+public interface NLHOwlFactory {
 
 	/**
 	 * Create the correct document
