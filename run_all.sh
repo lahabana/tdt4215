@@ -3,7 +3,7 @@ JAR="target/com.ntnu.tdt4215-0.0.1-jar-with-dependencies.jar"
 DIR="patientCase/"
 
 function usage {
-  echo "usage $1 --run|evaluate|evaluateMany jar-file query-folder
+  echo "usage $1 --run|evaluate|evaluate-many jar-file query-folder
 This script launches the program on each patient case
   --run: it just runs and display the result
   --evaluate runs and display some statistics
@@ -38,16 +38,15 @@ function evaluate {
 
 function evaluateMany {
     for NHITS in 5; do
-        for FICD in 8; do
+        for FICD in 1; do
             for FFT in 4; do
-                for BOOST in 0.5; do
+                for BOOST in 0.05; do
                     echo "Evaluating with parameters:" $NHITS $FICD $FFT $BOOST
                     evaluate $NHITS $FICD $FFT $BOOST
                 done
             done
         done
     done
-
 }
 
 if [ $# -eq 1 -o $# -eq 3 ]; then
