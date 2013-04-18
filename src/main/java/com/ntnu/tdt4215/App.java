@@ -4,6 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 
 import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.gui.SearchWindow;
+import com.ntnu.tdt4215.searchEngine.NLHIcd10;
 import com.ntnu.tdt4215.searchEngine.NLHIcd10OneIndex;
 
 import java.io.File;
@@ -13,17 +15,20 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.swing.JFrame;
+
 public class App {
 	
 	private static int nbHits = 5;
-	static NLHIcd10OneIndex manager;
+	static NLHIcd10 manager;
 	static PrintStream stdout;
+	private static SearchWindow gui;
 	
 	public static void main(String[] args) throws ParseException, IOException {
 		stdout = new PrintStream(System.out, true, "UTF-8");
 		System.setOut(stdout);
-		//manager = new com.ntnu.tdt4215.searchEngine.NLHIcd10();
-		manager = new com.ntnu.tdt4215.searchEngine.NLHIcd10OneIndex();
+		manager = new com.ntnu.tdt4215.searchEngine.NLHIcd10();
+		//manager = new com.ntnu.tdt4215.searchEngine.NLHIcd10OneIndex();
 
 		//nothing is specified we just launch the GUI
 		if (args.length == 0) {
@@ -71,8 +76,8 @@ public class App {
 	 * Launch the Graphic user interface
 	 */
 	private static void launchGui() {
-		// TODO Auto-generated method stub
-		System.out.println("TODO Gui");
+		gui = new SearchWindow(manager);
+		gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	private static boolean extractOptions(String[] args) {
@@ -80,9 +85,9 @@ public class App {
 			return false;
 		}
 		nbHits = Integer.parseInt(args[1]);
-		/*manager.factor_hits_icd = Integer.parseInt(args[2]);
+		manager.factor_hits_icd = Integer.parseInt(args[2]);
 		manager.factor_hits_ft = Integer.parseInt(args[3]);
-		manager.boost_icd = Float.parseFloat(args[4]);*/
+		manager.boost_icd = Float.parseFloat(args[4]);
 		return true;
 	}
 
