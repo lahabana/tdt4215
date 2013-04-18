@@ -11,6 +11,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.document.factory.NLHWebsiteFactory;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.query.NorwegianQueryFactory;
@@ -46,7 +47,7 @@ public class NLH extends SearchEngine {
 
 	@Override
 	public void indexAll() throws IOException {
-		NLHWebsiteCrawlerFSM fsm = new NLHWebsiteCrawlerFSM(FOLDERS);
+		NLHWebsiteCrawlerFSM fsm = new NLHWebsiteCrawlerFSM(FOLDERS, new NLHWebsiteFactory());
 		addAll("NLHIndex", fsm);
 	}
 }

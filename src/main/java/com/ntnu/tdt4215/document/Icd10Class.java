@@ -1,12 +1,12 @@
 package com.ntnu.tdt4215.document;
 
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 
-import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.rdf.model.Statement;
 import com.hp.hpl.jena.vocabulary.RDFS;
@@ -24,60 +24,43 @@ public class Icd10Class implements OwlClass {
 	static String ns = "http://research.idi.ntnu.no/hilab/ehr/ontologies/icd10no.owl#";
 	static Property code_compacted = ResourceFactory.createProperty(ns + "code_compacted");
 	static Property synonym = ResourceFactory.createProperty(ns + "synonym");
-	public static OntModel model;
 	static FieldType ftId = new FieldType();
 	static FieldType ftContent = new FieldType();
 	static {
 		ftId.setStored(true);
 		ftId.setTokenized(false);
 		ftId.setIndexed(false);
-		ftContent.setStored(false);
+		ftContent.setStored(true);
 		ftContent.setTokenized(true);
 		ftContent.setIndexed(true);
 	}
 	
-	public Icd10Class(Statement stmt) {
-		// Get the code of the entry
-		Resource  subject   = stmt.getSubject();
-	    Statement codeStmt = subject.getProperty(code_compacted);
+	public Icd10Class(OntClass ontClass) {
+		extractInfo(ontClass);
+	    setContent();
+	    setId();
+	}
+
+	public void extractInfo(OntClass ontClass) {
+	    Statement codeStmt = ontClass.getProperty(code_compacted);
 	    if (codeStmt != null) {
 	    	id = codeStmt.getString();
 	    }
-	    extractInfo(stmt);
-	    setContent();
-	    setId();
-	} 
-	
-	public void extractInfo(Statement stmt) {
-		Resource  subject   = stmt.getSubject();// get the subject
-	    // get the title
-	    Statement labelStmt = subject.getProperty(RDFS.label);
+		Statement labelStmt = ontClass.getProperty(RDFS.label);
 	    if (labelStmt != null) {
 	    	content = labelStmt.getString();
 	    }
-	    
 	    // Get the synonyms
-	    if (subject.hasProperty(synonym)) {
-	    	Statement propertyStmt = subject.getProperty(synonym);
+	    if (ontClass.hasProperty(synonym)) {
+	    	Statement propertyStmt = ontClass.getProperty(synonym);
 	    	content += " " + propertyStmt.getString();
 	    }
-	    
-	    if (subject.hasProperty(RDFS.subClassOf)) {
-	    	Statement subclass = subject.getProperty(RDFS.subClassOf);
-	    	boolean stop = false;
-	    	while(!stop) {
-		    	Property parent = model.getProperty(subclass.getResource().getURI());
-		    	content += " " + parent.getProperty(RDFS.label).getString();
-		    	if (!parent.hasProperty(RDFS.subClassOf)) {
-		    		stop = true;
-		    	} else {
-		    		if (parent.getProperty(RDFS.subClassOf).getResource().equals(subclass.getResource())) {
-		    			stop = true;
-		    		} else {
-		    			subclass = parent.getProperty(RDFS.subClassOf);
-		    		}
-		    	}
-	    	}
+	    if (ontClass.hasSuperClass()) {
+	    	OntClass parent = ontClass.getSuperClass();
+	    	Statement superLabelStmt = parent.getProperty(RDFS.label);
+		    if (superLabelStmt != null) {
+		    	content += " " + superLabelStmt.getString();
+		    }
 	    }
 	}
 		

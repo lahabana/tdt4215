@@ -14,6 +14,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import com.ntnu.tdt4215.document.NLHChapter;
+import com.ntnu.tdt4215.document.factory.NLHFactory;
 
 public class NLHWebsiteCrawlerFSM implements IndexingFSM {
 
@@ -23,15 +24,14 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM {
 	protected Iterator<String> insideChapterIterator;
 	private ArrayList<String> chaptersSelectorsInDocument;
 	protected static FileFilter filter = new NLHFileFilter();
+	protected NLHFactory factory;
 	
-	public NLHWebsiteCrawlerFSM(String[] folders) {
+	public NLHWebsiteCrawlerFSM(String[] folders, NLHFactory factor) {
 		files = new ArrayList<File>();
-		loadFilesToCrawl(folders);
-	}
-	
-	public NLHWebsiteCrawlerFSM(String folder) {
-		files = new ArrayList<File>();
-		loadFileFolder(folder);
+		for (int i = 0; i < folders.length; i++) {
+			loadFileFolder(folders[i]);	
+		}
+		factory = factor;
 	}
 
 	public boolean hasNext() {
@@ -72,16 +72,6 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM {
 
 	public void remove() {
 		throw new UnsupportedOperationException();
-	}
-	
-	/**
-	 * Select all the files that will have to be crawled
-	 * @param folders
-	 */
-	protected void loadFilesToCrawl(String[] folders) {
-		for (int i = 0; i < folders.length; i++) {
-			loadFileFolder(folders[i]);	
-		}
 	}
 	
 	protected void loadFileFolder(String folder) {
@@ -137,7 +127,7 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM {
 		title = elt.select("h1,h2,h3,h4,h5,h6").first().text();
 		// Get all the text
 		content = elt.text();
-		return new NLHChapter(title, content);
+		return factory.create(title, content);
 	}
 }
 

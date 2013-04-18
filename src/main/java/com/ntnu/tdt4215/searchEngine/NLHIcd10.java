@@ -12,15 +12,18 @@ import org.apache.lucene.store.SimpleFSDirectory;
 
 import com.ntnu.tdt4215.document.NLHChapter;
 import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.document.factory.Icd10Factory;
+import com.ntnu.tdt4215.document.factory.NLHFactory;
 import com.ntnu.tdt4215.document.factory.NLHIcd10Factory;
 import com.ntnu.tdt4215.document.factory.NLHIcd10InlineFactory;
+import com.ntnu.tdt4215.document.factory.NLHWebsiteFactory;
 import com.ntnu.tdt4215.index.MultipleQueryPolicy;
 import com.ntnu.tdt4215.index.SentenceCountQueryPolicy;
 import com.ntnu.tdt4215.index.manager.MergingManager;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
-import com.ntnu.tdt4215.parser.Icd10FSM;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
+import com.ntnu.tdt4215.parser.OwlFSM;
 import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
 
@@ -46,7 +49,7 @@ public class NLHIcd10 extends SearchEngine {
 	// The multiplicative factor in the number of results retrieved on the Fulltext search
 	public int factor_hits_ft = 4;
 	// How much to increase the score of a NLH Chapter that is retrieved by both methods
-	public float boost_icd = 0.5f;
+	public float boost_icd = 0.05f;
 	
 	public NLHIcd10() throws IOException {
 		super();
@@ -141,10 +144,12 @@ public class NLHIcd10 extends SearchEngine {
 
 	@Override
 	public void indexAll() throws IOException {
-		IndexingFSM icd10fsm = new Icd10FSM("documents/icd10no.owl");
+		IndexingFSM icd10fsm = new OwlFSM("documents/icd10no.owl", new Icd10Factory());
 		addAll("icd10", icd10fsm);
 		
-		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM("documents/NLH/T/");
+		String[] folders = {"documents/NLH/T/"};
+		NLHFactory factory = new NLHWebsiteFactory();
+		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM(folders, factory );
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {
 			NLHChapter chap = (NLHChapter) NLHfsm.next();
@@ -164,10 +169,9 @@ public class NLHIcd10 extends SearchEngine {
 			}
 		}
 		NLHfsm.finish();
-		IndexingFSM NLHfsm2 = new NLHWebsiteCrawlerFSM("documents/NLH/L/");
+		String[] folders2 = {"documents/NLH/L/", "documents/NLH/G/"};
+		IndexingFSM NLHfsm2 = new NLHWebsiteCrawlerFSM(folders2, factory);
 		addAll("NLH", NLHfsm2);
-		IndexingFSM NLHfsm3 = new NLHWebsiteCrawlerFSM("documents/NLH/G/");
-		addAll("NLH", NLHfsm3);
 		this.closeWriter();
 	}
 

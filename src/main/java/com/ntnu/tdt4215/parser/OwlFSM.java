@@ -3,11 +3,13 @@ package com.ntnu.tdt4215.parser;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.hp.hpl.jena.ontology.OntClass;
+import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.Selector;
-import com.hp.hpl.jena.rdf.model.StmtIterator;
 import com.hp.hpl.jena.util.FileManager;
-import com.ntnu.tdt4215.document.Icd10Class;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
+import com.ntnu.tdt4215.document.OwlClass;
+import com.ntnu.tdt4215.document.factory.OwlFactory;
 
 /**
  * An abstract class to make an FSM on a owl file
@@ -17,18 +19,40 @@ import com.ntnu.tdt4215.document.Icd10Class;
  *
  * @param <T>
  */
-public abstract class OwlFSM implements IndexingFSM {
+public class OwlFSM implements IndexingFSM {
 	private String filename;
-	protected StmtIterator iter;
-	private Selector selector;
+	private OntModel model;
+	private OwlFactory factory;
+	private OntClass next = null;
+	private ExtendedIterator<OntClass> classes;
 	
-	public OwlFSM(String file, Selector sel) {
+	public OwlFSM(String file, OwlFactory fact) {
 		filename = file;
-		selector = sel;
+		factory = fact;
 	}
 	
 	public boolean hasNext() {
-		return iter.hasNext();
+		return next != null;
+	}
+	
+	public OwlClass next() {
+		OwlClass res = factory.create(next);
+		skip();
+		return res;
+	}
+
+	/**
+	 * Move the iterator to the next class without a children
+	 */
+	private void skip() {
+		while (classes.hasNext()) {
+            OntClass possible = classes.next();
+            if (possible.getSubClass().equals(possible)) {
+            	next = possible;
+            	return;
+            }
+        }
+		next = null;
 	}
 
 	public void remove() {
@@ -43,19 +67,21 @@ public abstract class OwlFSM implements IndexingFSM {
 		                                 "File: " + filename + " not found");
 		}
 		// create an empty model
-		Icd10Class.model = ModelFactory.createOntologyModel();
-		Icd10Class.model.read(in, null);
+		model = ModelFactory.createOntologyModel();
+		model.read(in, null);
+		
 		try {
 			in.close();
 		} catch (IOException e) {
 			System.err.println("Couldn't close the inputStream");
 		}
-		iter = Icd10Class.model.listStatements(selector);
+		classes = model.listClasses();
+		skip();
 	}
 
 	public void finish() {
-		iter = null;
-		Icd10Class.model = null;
+		model = null;
+		classes = null;
 	}
 
 }
