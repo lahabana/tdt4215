@@ -5,6 +5,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 
 import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.gui.SearchWindow;
+import com.ntnu.tdt4215.searchEngine.SearchEngine;
 import com.ntnu.tdt4215.searchEngine.SeparateIndexSE;
 import com.ntnu.tdt4215.searchEngine.SingleIndexSE;
 
@@ -20,7 +21,7 @@ import javax.swing.JFrame;
 public class App {
 	
 	private static int nbHits = 5;
-	static SeparateIndexSE manager;
+	static SearchEngine manager;
 	static PrintStream stdout;
 	private static SearchWindow gui;
 	
@@ -81,15 +82,22 @@ public class App {
 	}
 
 	private static boolean extractOptions(String[] args) {
-		if (args.length != 6) {
+		nbHits = Integer.parseInt(args[1]);
+		if (manager instanceof SeparateIndexSE) {
+			if (args.length != 6) {
+				return false;
+			}
+			((SeparateIndexSE)manager).factor_hits_icd = Integer.parseInt(args[2]);
+			((SeparateIndexSE)manager).factor_hits_ft = Integer.parseInt(args[3]);
+			((SeparateIndexSE)manager).boost_icd = Float.parseFloat(args[4]);
+			((SeparateIndexSE)manager).boost_atc = Float.parseFloat(args[5]);
+			return true;
+		}
+		if (args.length != 2) {
 			return false;
 		}
-		nbHits = Integer.parseInt(args[1]);
-		manager.factor_hits_icd = Integer.parseInt(args[2]);
-		manager.factor_hits_ft = Integer.parseInt(args[3]);
-		manager.boost_icd = Float.parseFloat(args[4]);
-		manager.boost_atc = Float.parseFloat(args[5]);
 		return true;
+
 	}
 
 	/**
