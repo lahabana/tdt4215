@@ -114,18 +114,11 @@ public class NLHIcd10 extends SearchEngine {
 		// If there are icd entries well look for the entries that we have 
 		// linked to a chapter
 		if (docs.size() > 0) {
-			/*for (ScoredDocument d : docs) {
-				queryIcd += d.getField("id") + " ";
-				System.out.print(d + "/");
-			}
-			System.out.println();*/
-			if (docs.size() > 0) {
-				for (ScoredDocument d : docs) {
-					float score = d.getScore();
-					String id = d.getField("id");
-					for (int i = 0; i < score; i++) {
-						queryIcd += id + " ";
-					}
+			for (ScoredDocument d : docs) {
+				float score = d.getScore();
+				String id = d.getField("id");
+				for (int i = 0; i < score; i++) {
+					queryIcd += id + " ";
 				}
 			}
 			chapters = primaryIdx.getResults(nbHits, queryIcd);
