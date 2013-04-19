@@ -30,16 +30,18 @@ import com.ntnu.tdt4215.query.QueryFactory;
 
 public class NLHIcd10 extends SearchEngine {
 	private MergingManager idxIcd10;
+	private MergingManager idxAtc;
 	private SimpleManager idxNLH;
 	private SimpleManager idxNLHIcd10;
 
 	private static final File INDEXNLH = new File("indexes/NLH");
 	private static final File INDEXICD10 = new File("indexes/icd10");
+	private static final File INDEXATC = new File("indexes/atc");
 	private static final File INDEXNLHICD10 = new File("indexes/NLHicd10");
 
 	// Part interesting to configure
 	// The way the NLHIcd associations documents are stored in the lucene index
-	public NLHOwlFactory NLHIcd10F = new NLHOwlInlineFactory(); // NLHIcd10sFactory();
+	public NLHOwlFactory NLHOwlF = new NLHOwlInlineFactory(); // NLHIcd10sFactory();
 	// The way we split a large document in sentences and return scored results
 	public MultipleQueryPolicy sentenceMQP = new SentenceCountQueryPolicy(); //new SentenceQueryPolicy(0.2f);
 	// The query factory for fulltext text (patientCase, chapters...)
@@ -58,20 +60,25 @@ public class NLHIcd10 extends SearchEngine {
 		idxIcd10 = new MergingManager(dirIcd10, fulltextQPF);
 		addIndex("icd10", idxIcd10);
 		idxIcd10.setQueryPolicy(sentenceMQP);
+
+		Directory dirAtc = new SimpleFSDirectory(INDEXATC);
+		idxAtc = new MergingManager(dirAtc, fulltextQPF);
+		addIndex("atc", idxAtc);
+		idxAtc.setQueryPolicy(sentenceMQP);
 		
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);
 		idxNLH = new SimpleManager(dirNLH, fulltextQPF);
 		addIndex("NLH", idxNLH);
 		
 		Directory dirNLHIcd10 = new SimpleFSDirectory(INDEXNLHICD10);
-		idxNLHIcd10 = new SimpleManager(dirNLHIcd10, NLHIcd10F.getQueryFactory());
+		idxNLHIcd10 = new SimpleManager(dirNLHIcd10, NLHOwlF.getQueryFactory());
 		addIndex("NLHicd10", idxNLHIcd10);
 	}
 
 	@Override
 	public Collection<ScoredDocument> getResults(int nbHits, String querystr)
 			throws IOException, ParseException {
-		NLHIcd10F.getQueryFactory().prepare(idxNLHIcd10.getReader());
+		NLHOwlF.getQueryFactory().prepare(idxNLHIcd10.getReader());
 		// Get the most relevant chapters according to the ICD entries
 		Collection<ScoredDocument> icdMatches = getNLHChaptersFromIcd(nbHits * factor_hits_icd, querystr);
 		// Get the most relevant ICD chapters in fulltext search
@@ -139,14 +146,18 @@ public class NLHIcd10 extends SearchEngine {
 	public void clean() throws IOException {
 		deleteDirectory(INDEXNLH);
 		deleteDirectory(INDEXICD10);
+		deleteDirectory(INDEXATC);
 		deleteDirectory(INDEXNLHICD10);
 	}
 
 	@Override
-	public void indexAll() throws IOException {
-		IndexingFSM atcfsm = new OwlFSM("documents/atc_no_ext.ttl", new AtcFactory());
+	public void indexAll() throws IOException {// atc_no_ext.ttl
+		IndexingFSM atcfsm = new OwlFSM("documents/atc_no_ext_corrected.owl", new AtcFactory());
 		addAll("atc", atcfsm);
 		
+		IndexingFSM icd10fsm = new OwlFSM("documents/icd10no.owl", new AtcFactory());
+		addAll("icd10", icd10fsm);
+
 		String[] folders = {"documents/NLH/T/"};
 		NLHFactory factory = new NLHWebsiteFactory();
 		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM(folders, factory );
@@ -159,7 +170,7 @@ public class NLHIcd10 extends SearchEngine {
 				// We add these entries inside an index
 				if (res.size() > 0) {
 					//idxNLHIcd10.addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
-					idxNLHIcd10.addDoc(NLHIcd10F.create(chap.getTitle(), res).getDocument());
+					idxNLHIcd10.addDoc(NLHOwlF.create(chap.getTitle(), res).getDocument());
 				}
 				// We add the chapter to the index
 				idxNLH.addDoc(chap.getDocument());

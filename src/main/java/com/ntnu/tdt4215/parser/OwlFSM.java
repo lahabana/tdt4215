@@ -5,6 +5,7 @@ import java.io.InputStream;
 
 import com.hp.hpl.jena.ontology.OntClass;
 import com.hp.hpl.jena.ontology.OntModel;
+import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileManager;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
@@ -47,7 +48,7 @@ public class OwlFSM implements IndexingFSM {
 	private void skip() {
 		while (classes.hasNext()) {
             OntClass possible = classes.next();
-            if (possible.getSubClass().equals(possible)) {
+            if (possible.getSubClass() == null || possible.getSubClass().equals(possible)) {
             	next = possible;
             	return;
             }
@@ -67,7 +68,7 @@ public class OwlFSM implements IndexingFSM {
 		                                 "File: " + filename + " not found");
 		}
 		// create an empty model
-		model = ModelFactory.createOntologyModel();
+		model = ModelFactory.createOntologyModel(OntModelSpec.OWL_MEM);
 		model.read(in, null);
 		
 		try {

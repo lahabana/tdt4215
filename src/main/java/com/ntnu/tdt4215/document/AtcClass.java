@@ -41,7 +41,7 @@ public class AtcClass implements OwlClass {
 		    if (superLabel!= null) {
 		    	content += " " + superLabel;
 		    }
-		    if (parent.getSuperClass().equals(parent)) {
+		    if (parent.getSuperClass() == null || parent.getSuperClass().equals(parent)) {
 		    	break;
 		    }
 	    }
