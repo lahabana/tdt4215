@@ -1,7 +1,7 @@
 #!/bin/bash
 JAR="target/com.ntnu.tdt4215-0.0.1-jar-with-dependencies.jar"
 DIR="patientCase/"
-ENGINE="single"
+ENGINE="separate"
 
 function usage {
   echo "usage $1 --run|evaluate|evaluate-many jar-file query-folder
@@ -40,12 +40,14 @@ function evaluate {
 function evaluateMany {
     for NHITS in 5; do
         for FICD in 1; do
-            for FFT in 4; do
-                for BOOSTICD in 0.05; do
-                		for BOOSTATC in 0.05 0.1 0.5; do
-                    		echo "Evaluating with parameters:" $NHITS $FICD $FFT $BOOSTICD $BOOSTATC
-                    		evaluate $NHITS $FICD $FFT $BOOSTICD $BOOSTATC
-                 		done
+						for FATC in 1; do
+								for FFT in 8; do
+										for BOOSTICD in 0.05; do
+												for BOOSTATC in 0.05; do
+														echo "Evaluating with parameters:" $NHITS $FICD $FATC $FFT $BOOSTICD $BOOSTATC
+														evaluate $NHITS $FICD $FATC $FFT $BOOSTICD $BOOSTATC
+												done
+										done
                 done
             done
         done

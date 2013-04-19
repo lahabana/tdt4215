@@ -55,6 +55,7 @@ public class SeparateIndexSE extends SearchEngine {
 	public QueryFactory fulltextQPF = new NorwegianQueryFactory();
 	// The multiplicative factor in the number of results retrieved on the NLHIcd associations
 	public int factor_hits_icd = 1;
+	public static int factor_hits_atc = 1;
 	// The multiplicative factor in the number of results retrieved on the Fulltext search
 	public int factor_hits_ft = 4;
 	// How much to increase the score of a NLH Chapter that is retrieved by both methods
@@ -95,7 +96,7 @@ public class SeparateIndexSE extends SearchEngine {
 		// Get the most relevant chapters according to the ICD entries
 		Collection<ScoredDocument> icdMatches = getNLHChaptersFromOwl(idxNLHIcd10, idxIcd10, nbHits * factor_hits_icd, querystr);
 		// Get the most relevant chapters according to the ICD entries
-		Collection<ScoredDocument> atcMatches = getNLHChaptersFromOwl(idxNLHAtc, idxAtc, nbHits * factor_hits_icd, querystr);
+		Collection<ScoredDocument> atcMatches = getNLHChaptersFromOwl(idxNLHAtc, idxAtc, nbHits * factor_hits_atc, querystr);
 		// Get the most relevant ICD chapters in fulltext search
 		Collection<ScoredDocument> chapters = idxNLH.getResults(nbHits * factor_hits_ft, querystr);
 		// Merge both results

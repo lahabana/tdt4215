@@ -99,13 +99,14 @@ public class App {
 	private static boolean extractOptions(String[] args) {
 		nbHits = Integer.parseInt(args[1]);
 		if (manager instanceof SeparateIndexSE) {
-			if (args.length != 6) {
+			if (args.length != 7) {
 				return false;
 			}
 			((SeparateIndexSE)manager).factor_hits_icd = Integer.parseInt(args[2]);
-			((SeparateIndexSE)manager).factor_hits_ft = Integer.parseInt(args[3]);
-			((SeparateIndexSE)manager).boost_icd = Float.parseFloat(args[4]);
-			((SeparateIndexSE)manager).boost_atc = Float.parseFloat(args[5]);
+			((SeparateIndexSE)manager).factor_hits_atc = Integer.parseInt(args[3]);
+			((SeparateIndexSE)manager).factor_hits_ft = Integer.parseInt(args[4]);
+			((SeparateIndexSE)manager).boost_icd = Float.parseFloat(args[5]);
+			((SeparateIndexSE)manager).boost_atc = Float.parseFloat(args[6]);
 			return true;
 		}
 		if (args.length != 2) {
