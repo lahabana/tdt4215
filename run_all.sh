@@ -1,6 +1,7 @@
 #!/bin/bash
 JAR="target/com.ntnu.tdt4215-0.0.1-jar-with-dependencies.jar"
 DIR="patientCase/"
+ENGINE="single"
 
 function usage {
   echo "usage $1 --run|evaluate|evaluate-many jar-file query-folder
@@ -23,7 +24,7 @@ function evaluate {
     # The tr puts everything on a single line
     # The second tr replaces every 'Matches:' by a line end
     # we then remove the starting space and the first endline
-    (find "$DIR"*.txt; echo "") | java -jar "$JAR" --search $@ \
+    (find "$DIR"*.txt; echo "") | java -jar "$JAR" --search-engine "$ENGINE" --search $@ \
                 | grep -E '(^[A-Z][0-9].*$|^Matches:)' \
                 | sed -E 's/^([A-Z]([0-9]\.?)+).*$/\1/g' \
                 | tr -s '\n' ' ' \
@@ -57,15 +58,15 @@ if [ $# -eq 1 -o $# -eq 3 ]; then
         DIR="$3"
     fi
     echo "cleaning the old index"
-    java -jar "$JAR" --clean
+    java -jar "$JAR" --search-engine "$ENGINE" --clean
     echo "creating the new index"
-    java -jar "$JAR" --index
+    java -jar "$JAR" --search-engine "$ENGINE" --index
 
     if [ "$1" = "--evaluate" ]; then
         echo "Evaluating each patient case and showing the final report"
         evaluate
     elif [ "$1" = "--run" ]; then
-        (find "$DIR"*.txt; echo "") | java -jar "$JAR" --search
+        (find "$DIR"*.txt; echo "") | java -jar "$JAR" --search-engine "$ENGINE" --search
     elif [ "$1" = "--evaluate-many" ]; then
         evaluateMany
     else
