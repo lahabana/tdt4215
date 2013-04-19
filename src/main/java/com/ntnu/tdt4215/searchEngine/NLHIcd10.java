@@ -13,6 +13,7 @@ import org.apache.lucene.store.SimpleFSDirectory;
 import com.ntnu.tdt4215.document.NLHChapter;
 import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.document.factory.AtcFactory;
+import com.ntnu.tdt4215.document.factory.Icd10Factory;
 import com.ntnu.tdt4215.document.factory.NLHFactory;
 import com.ntnu.tdt4215.document.factory.NLHOwlFactory;
 import com.ntnu.tdt4215.document.factory.NLHOwlInlineFactory;
@@ -33,10 +34,12 @@ public class NLHIcd10 extends SearchEngine {
 	private MergingManager idxAtc;
 	private SimpleManager idxNLH;
 	private SimpleManager idxNLHIcd10;
+	private SimpleManager idxNLHAtc;
 
 	private static final File INDEXNLH = new File("indexes/NLH");
 	private static final File INDEXICD10 = new File("indexes/icd10");
 	private static final File INDEXATC = new File("indexes/atc");
+	private static final File INDEXNLHATC = new File("indexes/NLHatc");
 	private static final File INDEXNLHICD10 = new File("indexes/NLHicd10");
 
 	// Part interesting to configure
@@ -52,7 +55,9 @@ public class NLHIcd10 extends SearchEngine {
 	public int factor_hits_ft = 4;
 	// How much to increase the score of a NLH Chapter that is retrieved by both methods
 	public float boost_icd = 0.05f;
-	
+	// How much to increase the score of a NLH Chapter that is retrieved by both methods
+	public float boost_atc = 0.05f;
+
 	public NLHIcd10() throws IOException {
 		super();
 		// Create the managers
@@ -65,14 +70,18 @@ public class NLHIcd10 extends SearchEngine {
 		idxAtc = new MergingManager(dirAtc, fulltextQPF);
 		addIndex("atc", idxAtc);
 		idxAtc.setQueryPolicy(sentenceMQP);
-		
+
 		Directory dirNLH = new SimpleFSDirectory(INDEXNLH);
 		idxNLH = new SimpleManager(dirNLH, fulltextQPF);
 		addIndex("NLH", idxNLH);
-		
+
 		Directory dirNLHIcd10 = new SimpleFSDirectory(INDEXNLHICD10);
 		idxNLHIcd10 = new SimpleManager(dirNLHIcd10, NLHOwlF.getQueryFactory());
 		addIndex("NLHicd10", idxNLHIcd10);
+
+		Directory dirNLHatc = new SimpleFSDirectory(INDEXNLHATC);
+		idxNLHAtc = new SimpleManager(dirNLHatc, NLHOwlF.getQueryFactory());
+		addIndex("NLHatc", idxNLHAtc);
 	}
 
 	@Override
@@ -80,11 +89,13 @@ public class NLHIcd10 extends SearchEngine {
 			throws IOException, ParseException {
 		NLHOwlF.getQueryFactory().prepare(idxNLHIcd10.getReader());
 		// Get the most relevant chapters according to the ICD entries
-		Collection<ScoredDocument> icdMatches = getNLHChaptersFromIcd(nbHits * factor_hits_icd, querystr);
+		Collection<ScoredDocument> icdMatches = getNLHChaptersFromOwl(idxNLHIcd10, idxIcd10, nbHits * factor_hits_icd, querystr);
+		// Get the most relevant chapters according to the ICD entries
+		Collection<ScoredDocument> atcMatches = getNLHChaptersFromOwl(idxNLHAtc, idxAtc, nbHits * factor_hits_icd, querystr);
 		// Get the most relevant ICD chapters in fulltext search
 		Collection<ScoredDocument> chapters = idxNLH.getResults(nbHits * factor_hits_ft, querystr);
 		// Merge both results
-		return mergeResults(chapters, icdMatches);
+		return mergeResults(chapters, icdMatches, atcMatches);
 	}
 
 	/**
@@ -95,9 +106,10 @@ public class NLHIcd10 extends SearchEngine {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public Collection<ScoredDocument> getNLHChaptersFromIcd(int nbHits, String querystr) throws IOException, ParseException {
-		Collection<ScoredDocument> docs = idxIcd10.getResults(1, querystr);
-		Collection<ScoredDocument> icdChapters = null;
+	public Collection<ScoredDocument> getNLHChaptersFromOwl(SimpleManager primaryIdx, MergingManager secondaryIdx, 
+															int nbHits, String querystr) throws IOException, ParseException {
+		Collection<ScoredDocument> docs = secondaryIdx.getResults(1, querystr);
+		Collection<ScoredDocument> chapters = null;
 		String queryIcd = "";
 		// If there are icd entries well look for the entries that we have 
 		// linked to a chapter
@@ -116,24 +128,28 @@ public class NLHIcd10 extends SearchEngine {
 					}
 				}
 			}
-			icdChapters = idxNLHIcd10.getResults(nbHits, queryIcd);
+			chapters = primaryIdx.getResults(nbHits, queryIcd);
 		}
-		return icdChapters;
+		return chapters;
 	}
 	
 	/**
 	 * Take two collection and merge them together and return a sorted collection of results
 	 * @param chapters
 	 * @param icdMatches
+	 * @param atcMatches
 	 * @return
 	 */
 	private Collection<ScoredDocument> mergeResults(Collection<ScoredDocument> chapters,
-			Collection<ScoredDocument> icdMatches) {
+			Collection<ScoredDocument> icdMatches, Collection<ScoredDocument> atcMatches) {
 		ArrayList<ScoredDocument> res = new ArrayList<ScoredDocument>();
 		// For each document retrieved by full text we increase its ranking if it also appeared in ICD
 		for (ScoredDocument sd: chapters) {
 			if (icdMatches != null && icdMatches.contains(sd)) {
 				sd.setScore(sd.getScore() + boost_icd);// Probably add some sort of reinforcement here
+			}
+			if (atcMatches != null && atcMatches.contains(sd)) {
+				sd.setScore(sd.getScore() + boost_atc);// Probably add some sort of reinforcement here
 			}
 			res.add(sd);
 		}
@@ -148,43 +164,56 @@ public class NLHIcd10 extends SearchEngine {
 		deleteDirectory(INDEXICD10);
 		deleteDirectory(INDEXATC);
 		deleteDirectory(INDEXNLHICD10);
+		deleteDirectory(INDEXNLHATC);
 	}
 
 	@Override
-	public void indexAll() throws IOException {// atc_no_ext.ttl
+	public void indexAll() throws IOException {
+		System.out.println("Index atc");
 		IndexingFSM atcfsm = new OwlFSM("documents/atc_no_ext_corrected.owl", new AtcFactory());
 		addAll("atc", atcfsm);
 		
-		IndexingFSM icd10fsm = new OwlFSM("documents/icd10no.owl", new AtcFactory());
+		System.out.println("Index icd10");
+		IndexingFSM icd10fsm = new OwlFSM("documents/icd10no.owl", new Icd10Factory());
 		addAll("icd10", icd10fsm);
 
-		String[] folders = {"documents/NLH/T/"};
+		System.out.println("Index NLH");
 		NLHFactory factory = new NLHWebsiteFactory();
-		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM(folders, factory );
+		String[] folders = {"documents/NLH/T/"};
+		IndexingFSM NLHfsm = new NLHWebsiteCrawlerFSM(folders, factory);
+		IndexNLH(NLHfsm, idxNLH, idxIcd10, idxNLHIcd10);
+
+		String[] folders2 = {"documents/NLH/L/"};
+		NLHfsm = new NLHWebsiteCrawlerFSM(folders2, factory);
+		IndexNLH(NLHfsm, idxNLH, idxAtc, idxNLHAtc);
+
+		String[] folders3 = {"documents/NLH/G/"};
+		NLHfsm = new NLHWebsiteCrawlerFSM(folders3, factory);
+		IndexNLH(NLHfsm, idxNLH, null, null);
+		this.closeWriter();
+	}
+
+	private void IndexNLH(IndexingFSM NLHfsm, SimpleManager primaryIdx, MergingManager secondaryIdx, SimpleManager linkingIdx) throws IOException {
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {
 			NLHChapter chap = (NLHChapter) NLHfsm.next();
 			try {
-				// We look for entries in icd10 that match the chapter
-				Collection<ScoredDocument> res = idxIcd10.getResults(1, chap.getContent());
-				// We add these entries inside an index
-				if (res.size() > 0) {
-					//idxNLHIcd10.addDoc(new NLHIcd10s(chap.getTitle(), res).getDocument());
-					idxNLHIcd10.addDoc(NLHOwlF.create(chap.getTitle(), res).getDocument());
+				if (secondaryIdx != null && linkingIdx != null) {
+					// We look for entries in icd10 that match the chapter
+					Collection<ScoredDocument> res = secondaryIdx.getResults(1, chap.getContent());
+					// We add these entries inside an index
+					if (res.size() > 0) {
+						linkingIdx.addDoc(NLHOwlF.create(chap.getTitle(), res).getDocument());
+					}
 				}
 				// We add the chapter to the index
-				idxNLH.addDoc(chap.getDocument());
+				primaryIdx.addDoc(chap.getDocument());
 			} catch (ParseException e) {
 				System.err.println("Couldn't parse properly" + chap.getTitle() +
 									". This chapter won't be indexed");
 			}
 		}
 		NLHfsm.finish();
-
-		String[] folders2 = {"documents/NLH/L/", "documents/NLH/G/"};
-		IndexingFSM NLHfsm2 = new NLHWebsiteCrawlerFSM(folders2, factory);
-		addAll("NLH", NLHfsm2);
-		this.closeWriter();
 	}
 
 }

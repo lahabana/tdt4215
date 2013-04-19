@@ -47,7 +47,6 @@ public class NLHWebsiteCrawlerFSM implements IndexingFSM {
 				// Parse the document and get an iterator on each chapter
 				currentDocument = Jsoup.parse(f, null);
 				currentDocument.outputSettings().charset("UTF-8");
-				System.out.println("Crawling file:" + f.getPath());
 				insideChapterIterator = ChaptersInDocument(currentDocument);
 			} catch (IOException e) {
 				System.err.println("Couldn't parse the document:" + f.getPath());

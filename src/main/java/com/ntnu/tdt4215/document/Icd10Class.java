@@ -30,7 +30,7 @@ public class Icd10Class implements OwlClass {
 		ftId.setStored(true);
 		ftId.setTokenized(false);
 		ftId.setIndexed(false);
-		ftContent.setStored(false);
+		ftContent.setStored(true);
 		ftContent.setTokenized(true);
 		ftContent.setIndexed(true);
 	}
@@ -63,7 +63,7 @@ public class Icd10Class implements OwlClass {
 		    if (superLabelStmt != null) {
 		    	content += " " + superLabelStmt.getString();
 		    }
-		    if (parent.getSuperClass().equals(parent)) {
+		    if (parent.getSuperClass() == null || parent.getSuperClass().equals(parent)) {
 		    	break;
 		    }
 	    }

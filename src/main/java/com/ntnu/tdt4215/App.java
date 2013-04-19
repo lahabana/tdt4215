@@ -81,13 +81,14 @@ public class App {
 	}
 
 	private static boolean extractOptions(String[] args) {
-		if (args.length != 5) {
+		if (args.length != 6) {
 			return false;
 		}
 		nbHits = Integer.parseInt(args[1]);
 		manager.factor_hits_icd = Integer.parseInt(args[2]);
 		manager.factor_hits_ft = Integer.parseInt(args[3]);
 		manager.boost_icd = Float.parseFloat(args[4]);
+		manager.boost_atc = Float.parseFloat(args[5]);
 		return true;
 	}
 

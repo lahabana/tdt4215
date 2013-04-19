@@ -40,9 +40,11 @@ function evaluateMany {
     for NHITS in 5; do
         for FICD in 1; do
             for FFT in 4; do
-                for BOOST in 0.05; do
-                    echo "Evaluating with parameters:" $NHITS $FICD $FFT $BOOST
-                    evaluate $NHITS $FICD $FFT $BOOST
+                for BOOSTICD in 0.05; do
+                		for BOOSTATC in 0.05 0.1 0.5; do
+                    		echo "Evaluating with parameters:" $NHITS $FICD $FFT $BOOSTICD $BOOSTATC
+                    		evaluate $NHITS $FICD $FFT $BOOSTICD $BOOSTATC
+                 		done
                 done
             done
         done
