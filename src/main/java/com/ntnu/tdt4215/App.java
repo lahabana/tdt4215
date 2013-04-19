@@ -28,8 +28,23 @@ public class App {
 	public static void main(String[] args) throws ParseException, IOException {
 		stdout = new PrintStream(System.out, true, "UTF-8");
 		System.setOut(stdout);
-		manager = new SeparateIndexSE();
-		//manager = new SingleIndexSE();
+		if (args.length >= 2 && args[0].equals("--search-engine")) {
+			if (args[1].equals("separate")) {
+				manager = new SeparateIndexSE();
+			} else if (args[1].equals("single")) {
+				manager = new SingleIndexSE();
+			} else {
+				showHelp();
+				System.exit(1);
+			}
+			String[] argsTmp = new String[args.length - 2];
+			for (int i = 0; i < argsTmp.length; i++) {
+				argsTmp[i] = args[i + 2];
+			}
+			args = argsTmp;
+		} else {
+			manager = new SeparateIndexSE();
+		}
 
 		//nothing is specified we just launch the GUI
 		if (args.length == 0) {
@@ -129,6 +144,8 @@ public class App {
 		System.out.println("-------TDT 4215 project app usage-----");
 		System.out.println("By: Anne-Sophie Gourlay, David Katuscak and Charly Molter");
 		System.out.println("\tOptions:");
+		System.out.println("\t\t--search-engine separate|single: (optional) must be the first option" +
+						   "select the type of search engine to use (default separate)");
 		System.out.println("\t\t--index: index documents");
 		System.out.println("\t\t--search start the program to search the index");
 		System.out.println("\t\t--clean: empty the index");

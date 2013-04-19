@@ -28,7 +28,11 @@ import com.ntnu.tdt4215.parser.OwlFSM;
 import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
 
-
+/**
+ * A searchEngine that look into NLH and enrich with two ontologies (icd10 and Atc) 
+ * the link between the ontologies and the NLH chapters are stored in separate indexes
+ *
+ */
 public class SeparateIndexSE extends SearchEngine {
 	private MergingManager idxIcd10;
 	private MergingManager idxAtc;
