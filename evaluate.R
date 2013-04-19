@@ -22,16 +22,18 @@ while (length(resLine <- readLines(con, n = 1, warn = FALSE)) > 0 && length(gsLi
   precision <- nbRelevantDocsRetrieved / nbRetrievedDocs
   recall <- nbRelevantDocsRetrieved / nbRelevantDocs
   fmeasure <- 2 * (precision * recall) / (precision + recall)
+  f3measure <- 10 * (precision * recall) / (9 * precision + recall)
   # When both recall and precision are Null we set the fmeasure as 0
   if (is.nan(fmeasure)) {
     fmeasure = 0
+    f3measure = 0
   }
-  m <- c(precision, recall, fmeasure)
+  m <- c(precision, recall, fmeasure, f3measure)
   total <- rbind(total, m)
 }
 close(con)
 
-colnames(total) <- c("precision","recall", "fmeasure")
+colnames(total) <- c("precision","recall", "fmeasure", "f3measure")
 print("summary")
 print(summary(total))
 
