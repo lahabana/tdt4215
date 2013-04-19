@@ -25,8 +25,8 @@ function evaluate {
     # The second tr replaces every 'Matches:' by a line end
     # we then remove the starting space and the first endline
     (find "$DIR"*.txt; echo "") | java -jar "$JAR" --search-engine "$ENGINE" --search $@ \
-                | grep -E '(^[A-Z][0-9].*$|^Matches:)' \
-                | sed -E 's/^([A-Z]([0-9]\.?)+).*$/\1/g' \
+                | grep -E '(^\*?[A-Z][0-9].*$|^Matches:)' \
+                | sed -E 's/^\*?([A-Z]([0-9]\.?)+).*$/\1/g' \
                 | tr -s '\n' ' ' \
                 | tr -s 'Matches:' '\n' \
                 | grep -E '^[^\n]' \
