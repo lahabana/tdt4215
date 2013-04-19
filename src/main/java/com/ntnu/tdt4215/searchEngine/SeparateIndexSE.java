@@ -29,7 +29,7 @@ import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
 
 
-public class NLHIcd10 extends SearchEngine {
+public class SeparateIndexSE extends SearchEngine {
 	private MergingManager idxIcd10;
 	private MergingManager idxAtc;
 	private SimpleManager idxNLH;
@@ -58,7 +58,7 @@ public class NLHIcd10 extends SearchEngine {
 	// How much to increase the score of a NLH Chapter that is retrieved by both methods
 	public float boost_atc = 0.05f;
 
-	public NLHIcd10() throws IOException {
+	public SeparateIndexSE() throws IOException {
 		super();
 		// Create the managers
 		Directory dirIcd10 = new SimpleFSDirectory(INDEXICD10);

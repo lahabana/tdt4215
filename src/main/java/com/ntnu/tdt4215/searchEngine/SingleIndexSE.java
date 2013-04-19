@@ -24,7 +24,7 @@ import com.ntnu.tdt4215.parser.OwlFSM;
 import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
 
-public class NLHIcd10OneIndex extends SearchEngine {
+public class SingleIndexSE extends SearchEngine {
 
 	private MergingManager idxIcd10;
 	private SimpleManager idxNLH;
@@ -38,7 +38,7 @@ public class NLHIcd10OneIndex extends SearchEngine {
 	public QueryFactory fulltextQPF = new NorwegianQueryFactory();
 		
 	
-	public NLHIcd10OneIndex() throws IOException {
+	public SingleIndexSE() throws IOException {
 		super();
 		// Create the managers
 		Directory dirIcd10 = new SimpleFSDirectory(INDEXICD10);

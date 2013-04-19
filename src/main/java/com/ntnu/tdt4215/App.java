@@ -5,8 +5,8 @@ import org.apache.lucene.queryparser.classic.ParseException;
 
 import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.gui.SearchWindow;
-import com.ntnu.tdt4215.searchEngine.NLHIcd10;
-import com.ntnu.tdt4215.searchEngine.NLHIcd10OneIndex;
+import com.ntnu.tdt4215.searchEngine.SeparateIndexSE;
+import com.ntnu.tdt4215.searchEngine.SingleIndexSE;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,15 +20,15 @@ import javax.swing.JFrame;
 public class App {
 	
 	private static int nbHits = 5;
-	static NLHIcd10 manager;
+	static SeparateIndexSE manager;
 	static PrintStream stdout;
 	private static SearchWindow gui;
 	
 	public static void main(String[] args) throws ParseException, IOException {
 		stdout = new PrintStream(System.out, true, "UTF-8");
 		System.setOut(stdout);
-		manager = new com.ntnu.tdt4215.searchEngine.NLHIcd10();
-		//manager = new com.ntnu.tdt4215.searchEngine.NLHIcd10OneIndex();
+		manager = new SeparateIndexSE();
+		//manager = new SingleIndexSE();
 
 		//nothing is specified we just launch the GUI
 		if (args.length == 0) {

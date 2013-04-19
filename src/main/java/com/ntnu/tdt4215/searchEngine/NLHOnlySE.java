@@ -22,11 +22,11 @@ import com.ntnu.tdt4215.query.QueryFactory;
  * @author charlymolter
  *
  */
-public class NLH extends SearchEngine {
+public class NLHOnlySE extends SearchEngine {
 	private static final File FILE = new File("indexes/NLHindex");
 	private static final String[] FOLDERS = {"documents/NLH/G/", "documents/NLH/L/", "documents/NLH/T/"};
 
-	public NLH() throws IOException {
+	public NLHOnlySE() throws IOException {
 		super();
 		Directory dir = new SimpleFSDirectory(FILE);
 		QueryFactory queryFactory = new NorwegianQueryFactory();
