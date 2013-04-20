@@ -1,9 +1,11 @@
-package com.ntnu.tdt4215.index;
+package com.ntnu.tdt4215.index.MultiplequeryPolicy;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.lucene.document.Document;
+
+import com.ntnu.tdt4215.index.ScoredDocument;
 
 
 /**

@@ -10,8 +10,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
 import com.ntnu.tdt4215.document.IndexableDocument;
+import com.ntnu.tdt4215.index.queryFactory.QueryFactory;
 import com.ntnu.tdt4215.parser.IndexingFSM;
-import com.ntnu.tdt4215.query.QueryFactory;
 
 abstract public class LuceneAbstractManager implements IndexManager {
 

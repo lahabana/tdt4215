@@ -5,8 +5,8 @@ import java.util.Collection;
 import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 
 import com.ntnu.tdt4215.index.ScoredDocument;
-import com.ntnu.tdt4215.query.QueryFactory;
-import com.ntnu.tdt4215.query.SimpleQueryFactory;
+import com.ntnu.tdt4215.index.queryFactory.QueryFactory;
+import com.ntnu.tdt4215.index.queryFactory.SimpleQueryFactory;
 
 public class NLHOwlInlineFactory implements NLHOwlFactory {
 	QueryFactory qpf = new SimpleQueryFactory(new WhitespaceAnalyzer(QueryFactory.VERSION));

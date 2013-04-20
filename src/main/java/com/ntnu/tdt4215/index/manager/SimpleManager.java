@@ -12,7 +12,7 @@ import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 
 import com.ntnu.tdt4215.index.ScoredDocument;
-import com.ntnu.tdt4215.query.QueryFactory;
+import com.ntnu.tdt4215.index.queryFactory.QueryFactory;
 
 /**
  * A directory manager just makes it easier to deal with Lucene's directory

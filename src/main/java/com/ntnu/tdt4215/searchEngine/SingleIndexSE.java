@@ -15,16 +15,16 @@ import com.ntnu.tdt4215.document.NLHChapter.NLHFactory;
 import com.ntnu.tdt4215.document.NLHChapter.NLHWebsiteFactory;
 import com.ntnu.tdt4215.document.owl.AtcFactory;
 import com.ntnu.tdt4215.document.owl.Icd10Factory;
-import com.ntnu.tdt4215.index.MultipleQueryPolicy;
 import com.ntnu.tdt4215.index.ScoredDocument;
-import com.ntnu.tdt4215.index.SentenceCountQueryPolicy;
+import com.ntnu.tdt4215.index.MultiplequeryPolicy.MultipleQueryPolicy;
+import com.ntnu.tdt4215.index.MultiplequeryPolicy.SentenceCountQueryPolicy;
 import com.ntnu.tdt4215.index.manager.MergingManager;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
+import com.ntnu.tdt4215.index.queryFactory.QueryFactory;
+import com.ntnu.tdt4215.index.queryFactory.SimpleQueryFactory;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.parser.OwlFSM;
-import com.ntnu.tdt4215.query.QueryFactory;
-import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
 /**
  * A searchEngine that look into NLH and enrich with two ontologies (icd10 and Atc) 

@@ -1,4 +1,4 @@
-package com.ntnu.tdt4215.query;
+package com.ntnu.tdt4215.index.queryFactory;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.IndexReader;

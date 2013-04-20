@@ -14,9 +14,9 @@ import org.apache.lucene.store.SimpleFSDirectory;
 import com.ntnu.tdt4215.document.NLHChapter.NLHWebsiteFactory;
 import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
+import com.ntnu.tdt4215.index.queryFactory.QueryFactory;
+import com.ntnu.tdt4215.index.queryFactory.SimpleQueryFactory;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
-import com.ntnu.tdt4215.query.QueryFactory;
-import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
 /**
  * A simple manager that just has a NLHChapter index
