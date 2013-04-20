@@ -117,19 +117,14 @@ public class SingleIndexSE extends SearchEngine {
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {
 			NLHChapter chap = (NLHChapter) NLHfsm.next();
-			try {
-				// We look for entries in icd10 that match the chapter
-				Collection<ScoredDocument> res = idxIcd10.getResults(1, chap.getContent());
-				// We add these entries inside an index
-				if (res.size() > 0) {
-					chap.setIcd(res);
-				}
-				// We add the chapter to the index
-				idxNLH.addDoc(chap.getDocument());
-			} catch (ParseException e) {
-				System.err.println("Couldn't parse properly" + chap.getTitle() +
-									". This chapter won't be indexed");
+			// We look for entries in icd10 that match the chapter
+			Collection<ScoredDocument> res = idxIcd10.getResults(1, chap.getContent());
+			// We add these entries inside an index
+			if (res.size() > 0) {
+				chap.setIcd(res);
 			}
+			// We add the chapter to the index
+			idxNLH.addDoc(chap);
 		}
 		NLHfsm.finish();
 
@@ -138,26 +133,21 @@ public class SingleIndexSE extends SearchEngine {
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {
 			NLHChapter chap = (NLHChapter) NLHfsm.next();
-			try {
-				// We look for entries in icd10 that match the chapter
-				Collection<ScoredDocument> res = idxAtc.getResults(1, chap.getContent());
-				// We add these entries inside an index
-				if (res.size() > 0) {
-					chap.setAtc(res);
-				}
-				// We add the chapter to the index
-				idxNLH.addDoc(chap.getDocument());
-			} catch (ParseException e) {
-				System.err.println("Couldn't parse properly" + chap.getTitle() +
-									". This chapter won't be indexed");
+			// We look for entries in icd10 that match the chapter
+			Collection<ScoredDocument> res = idxAtc.getResults(1, chap.getContent());
+			// We add these entries inside an index
+			if (res.size() > 0) {
+				chap.setAtc(res);
 			}
+			// We add the chapter to the index
+			idxNLH.addDoc(chap);
 		}
 		NLHfsm.finish();
 
 		String[] folders3 = {"documents/NLH/G/"};
 		NLHfsm = new NLHWebsiteCrawlerFSM(folders3, factory);
 		addAll("NLH", NLHfsm);
-		this.closeWriter();
+		this.close();
 	}
 	
 	@Override

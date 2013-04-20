@@ -56,7 +56,7 @@ public class SeparateIndexSE extends SearchEngine {
 	public QueryFactory fulltextQPF = new SimpleQueryFactory(new NorwegianAnalyzer(QueryFactory.VERSION));
 	// The multiplicative factor in the number of results retrieved on the NLHIcd associations
 	public int factor_hits_icd = 1;
-	public static int factor_hits_atc = 1;
+	public int factor_hits_atc = 1;
 	// The multiplicative factor in the number of results retrieved on the Fulltext search
 	public int factor_hits_ft = 4;
 	// How much to increase the score of a NLH Chapter that is retrieved by both methods
@@ -189,28 +189,23 @@ public class SeparateIndexSE extends SearchEngine {
 		String[] folders3 = {"documents/NLH/G/"};
 		NLHfsm = new NLHWebsiteCrawlerFSM(folders3, factory);
 		IndexNLH(NLHfsm, idxNLH, null, null);
-		this.closeWriter();
+		this.close();
 	}
 
 	private void IndexNLH(IndexingFSM NLHfsm, SimpleManager primaryIdx, MergingManager secondaryIdx, SimpleManager linkingIdx) throws IOException {
 		NLHfsm.initialize();
 		while (NLHfsm.hasNext()) {
 			NLHChapter chap = (NLHChapter) NLHfsm.next();
-			try {
-				if (secondaryIdx != null && linkingIdx != null) {
-					// We look for entries in icd10 that match the chapter
-					Collection<ScoredDocument> res = secondaryIdx.getResults(1, chap.getContent());
-					// We add these entries inside an index
-					if (res.size() > 0) {
-						linkingIdx.addDoc(NLHOwlF.create(chap.getTitle(), res).getDocument());
-					}
+			if (secondaryIdx != null && linkingIdx != null) {
+				// We look for entries in icd10 that match the chapter
+				Collection<ScoredDocument> res = secondaryIdx.getResults(1, chap.getContent());
+				// We add these entries inside an index
+				if (res.size() > 0) {
+					linkingIdx.addDoc(NLHOwlF.create(chap.getTitle(), res));
 				}
-				// We add the chapter to the index
-				primaryIdx.addDoc(chap.getDocument());
-			} catch (ParseException e) {
-				System.err.println("Couldn't parse properly" + chap.getTitle() +
-									". This chapter won't be indexed");
 			}
+			// We add the chapter to the index
+			primaryIdx.addDoc(chap);
 		}
 		NLHfsm.finish();
 	}

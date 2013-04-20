@@ -3,11 +3,7 @@ package com.ntnu.tdt4215.index.manager;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.queryparser.classic.ParseException;
-
+import com.ntnu.tdt4215.document.IndexableDocument;
 import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 
@@ -18,7 +14,7 @@ public interface IndexManager {
 	 * @param doc
 	 * @throws IOException
 	 */
-	public void addDoc(Document doc) throws IOException;
+	public void addDoc(IndexableDocument doc) throws IOException;
 	
 	/**
 	 * Add all the documents in the finite state machine and closes the writer.
@@ -36,30 +32,11 @@ public interface IndexManager {
 	 * @throws IOException
 	 * @throws ParseException
 	 */
-	public Collection<ScoredDocument> getResults(int nbHits, String querystr) throws IOException, ParseException;
+	public Collection<ScoredDocument> getResults(int nbHits, String querystr) throws IOException;
 	
 	/**
-	 * Returns the index reader (this is especially useful for singletons)
-	 * @return
-	 * @throws IOException 
-	 */
-	IndexReader getReader() throws IOException;
-
-	/**
-	 * Returns the index writer (this is especially useful for singletons)
-	 * @return
-	 */
-	IndexWriter getWriter() throws IOException;
-	
-	/**
-	 * Close the writer
+	 * Get all documents recently added retrievable
 	 * @throws IOException
 	 */
-	public void closeWriter() throws IOException;
-	
-	/**
-	 * Close the reader (necessary if you add new documents)
-	 * @throws IOException
-	 */
-	public void closeReader() throws IOException;
+	public void commit() throws IOException;
 }

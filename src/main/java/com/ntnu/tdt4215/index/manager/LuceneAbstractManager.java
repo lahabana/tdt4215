@@ -2,7 +2,6 @@ package com.ntnu.tdt4215.index.manager;
 
 import java.io.IOException;
 
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
@@ -10,6 +9,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
+import com.ntnu.tdt4215.document.IndexableDocument;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.query.QueryFactory;
 
@@ -36,8 +36,8 @@ abstract public class LuceneAbstractManager implements IndexManager {
 	 * @param doc
 	 * @throws IOException
 	 */
-	public void addDoc(Document doc) throws IOException {
-		getWriter().addDocument(doc);
+	public void addDoc(IndexableDocument doc) throws IOException {
+		getWriter().addDocument(doc.getDocument());
 	}
 	
 	/**
@@ -49,13 +49,17 @@ abstract public class LuceneAbstractManager implements IndexManager {
 	public void addAll(IndexingFSM fsm) throws IOException {
 		fsm.initialize();
 		while(fsm.hasNext()) {
-			Document d = fsm.next().getDocument();
-			this.addDoc(d);
+			this.addDoc(fsm.next());
 		}
 		fsm.finish();
-		this.closeWriter();
+		this.commit();
 	}
 	
+	/**
+	 * Returns the index reader (this is especially useful for singletons)
+	 * @return
+	 * @throws IOException 
+	 */
 	public IndexReader getReader() throws IOException {
 		if (currentReader == null) {
 			currentReader = DirectoryReader.open(index);
@@ -63,6 +67,10 @@ abstract public class LuceneAbstractManager implements IndexManager {
 		return currentReader;
 	}
 
+	/**
+	 * Returns the index writer (this is especially useful for singletons)
+	 * @return
+	 */
 	public IndexWriter getWriter() throws IOException {
 		if (currentWriter == null) {
 			IndexWriterConfig config = new IndexWriterConfig(VERSION, queryFactory.getAnalyzer());
@@ -70,16 +78,19 @@ abstract public class LuceneAbstractManager implements IndexManager {
 		}
 		return currentWriter;
 	}
-
-	public void closeReader() throws IOException {
-		currentReader.close();
-		currentReader = null;
-	}
 	
-	public void closeWriter() throws IOException {
+	/**
+	 * Close the writer
+	 * @throws IOException
+	 */
+	public void commit() throws IOException {
 		if (currentWriter != null) {
 			currentWriter.close();
 			currentWriter = null;
+		}
+		if (currentReader != null) {
+			currentReader.close();
+			currentReader = null;
 		}
 	}
 }

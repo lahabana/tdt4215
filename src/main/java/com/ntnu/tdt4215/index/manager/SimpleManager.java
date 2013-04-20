@@ -24,10 +24,14 @@ public class SimpleManager extends LuceneAbstractManager {
 		super(dir, qpf);
 	}
 
-	public Collection<ScoredDocument> getResults(int nbHits, String querystr) throws IOException, ParseException {
+	public Collection<ScoredDocument> getResults(int nbHits, String querystr) throws IOException {
 	    IndexSearcher searcher = new IndexSearcher(getReader());	
 	    TopScoreDocCollector collector = TopScoreDocCollector.create(nbHits, true);
-	    searcher.search(queryFactory.parse(QueryParser.escape(querystr)), collector);
+	    try {
+			searcher.search(queryFactory.parse(QueryParser.escape(querystr)), collector);
+		} catch (ParseException e) {
+			System.err.println("Couldn't parse the query:" + querystr);
+		}
 	    ScoreDoc[] hits = collector.topDocs().scoreDocs;
 	    ArrayList<ScoredDocument> matches = new ArrayList<ScoredDocument>();
 	    for (int i=0;i<hits.length;++i) {

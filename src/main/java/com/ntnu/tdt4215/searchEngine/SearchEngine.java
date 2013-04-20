@@ -76,15 +76,9 @@ abstract public class SearchEngine {
 		dm.addAll(fsm);
 	}
 	
-	public void closeWriter() throws IOException {
+	public void close() throws IOException {
 		for (String key : indexes.keySet()) {
-			indexes.get(key).closeWriter();
-		}
-	}
-
-	public void closeReader() throws IOException {
-		for (String key : indexes.keySet()) {
-			indexes.get(key).closeReader();
+			indexes.get(key).commit();
 		}
 	}
 
