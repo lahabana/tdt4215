@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.lucene.analysis.no.NorwegianAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -14,8 +15,8 @@ import com.ntnu.tdt4215.document.NLHChapter.NLHWebsiteFactory;
 import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
-import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
+import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
 /**
  * A simple manager that just has a NLHChapter index
@@ -29,7 +30,7 @@ public class NLHOnlySE extends SearchEngine {
 	public NLHOnlySE() throws IOException {
 		super();
 		Directory dir = new SimpleFSDirectory(FILE);
-		QueryFactory queryFactory = new NorwegianQueryFactory();
+		QueryFactory queryFactory = new SimpleQueryFactory(new NorwegianAnalyzer(QueryFactory.VERSION));
 		SimpleManager idx = new SimpleManager(dir, queryFactory);
 		addIndex("NLHIndex", idx);
 	}

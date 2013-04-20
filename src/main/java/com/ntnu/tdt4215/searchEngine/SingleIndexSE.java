@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.apache.lucene.analysis.no.NorwegianAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.store.Directory;
@@ -22,8 +23,8 @@ import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.parser.OwlFSM;
-import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
+import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
 /**
  * A searchEngine that look into NLH and enrich with two ontologies (icd10 and Atc) 
@@ -42,7 +43,7 @@ public class SingleIndexSE extends SearchEngine {
 	// The way we split a large document in sentences and return scored results
 	public MultipleQueryPolicy owlMQP = new SentenceCountQueryPolicy(); //new SentenceQueryPolicy(0.2f);
 	// The query factory for fulltext text (patientCase, chapters...)
-	public QueryFactory fulltextQPF = new NorwegianQueryFactory();
+	public QueryFactory fulltextQPF = new SimpleQueryFactory(new NorwegianAnalyzer(QueryFactory.VERSION));
 
 	public SingleIndexSE() throws IOException {
 		super();

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.apache.lucene.analysis.no.NorwegianAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
@@ -25,8 +26,8 @@ import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.parser.OwlFSM;
-import com.ntnu.tdt4215.query.NorwegianQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
+import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
 /**
  * A searchEngine that look into NLH and enrich with two ontologies (icd10 and Atc) 
@@ -52,7 +53,7 @@ public class SeparateIndexSE extends SearchEngine {
 	// The way we split a large document in sentences and return scored results
 	public MultipleQueryPolicy sentenceMQP = new SentenceCountQueryPolicy(); //new SentenceQueryPolicy(0.2f);
 	// The query factory for fulltext text (patientCase, chapters...)
-	public QueryFactory fulltextQPF = new NorwegianQueryFactory();
+	public QueryFactory fulltextQPF = new SimpleQueryFactory(new NorwegianAnalyzer(QueryFactory.VERSION));
 	// The multiplicative factor in the number of results retrieved on the NLHIcd associations
 	public int factor_hits_icd = 1;
 	public static int factor_hits_atc = 1;

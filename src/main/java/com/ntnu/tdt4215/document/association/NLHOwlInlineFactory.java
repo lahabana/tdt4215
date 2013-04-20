@@ -2,13 +2,14 @@ package com.ntnu.tdt4215.document.association;
 
 import java.util.Collection;
 
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+
 import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.query.QueryFactory;
-import com.ntnu.tdt4215.query.WhiteSpaceQueryFactory;
+import com.ntnu.tdt4215.query.SimpleQueryFactory;
 
 public class NLHOwlInlineFactory implements NLHOwlFactory {
-	QueryFactory qpf = new WhiteSpaceQueryFactory();
-	
+	QueryFactory qpf = new SimpleQueryFactory(new WhitespaceAnalyzer(QueryFactory.VERSION));
 	
 	public AbstractNLHIcd10 create(String title, Collection<ScoredDocument> content) {
 		return new NLHOwlInline(title, content);
