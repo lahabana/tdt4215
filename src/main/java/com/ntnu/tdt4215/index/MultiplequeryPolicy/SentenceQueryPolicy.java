@@ -1,4 +1,4 @@
-package com.ntnu.tdt4215.index.MultiplequeryPolicy;
+package com.ntnu.tdt4215.index.multipleQueryPolicy;
 
 import java.util.ArrayList;
 import java.util.Collection;
