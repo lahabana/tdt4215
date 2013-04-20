@@ -7,7 +7,7 @@ import java.io.File;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.ntnu.tdt4215.document.NLHChapter;
+import com.ntnu.tdt4215.document.NLHChapter.NLHChapter;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 
 

@@ -1,10 +1,13 @@
-package com.ntnu.tdt4215.document;
+package com.ntnu.tdt4215.document.NLHChapter;
 
 import java.util.Collection;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
+
+import com.ntnu.tdt4215.document.IndexableDocument;
+import com.ntnu.tdt4215.document.ScoredDocument;
 
 public class NLHChapter implements IndexableDocument {
 	// The Lucene document that is created.

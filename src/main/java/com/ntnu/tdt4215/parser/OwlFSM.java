@@ -9,8 +9,8 @@ import com.hp.hpl.jena.ontology.OntModelSpec;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileManager;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
-import com.ntnu.tdt4215.document.OwlClass;
-import com.ntnu.tdt4215.document.factory.OwlFactory;
+import com.ntnu.tdt4215.document.owl.AbstractOwlClass;
+import com.ntnu.tdt4215.document.owl.OwlFactory;
 
 /**
  * An abstract class to make an FSM on a owl file
@@ -36,8 +36,8 @@ public class OwlFSM implements IndexingFSM {
 		return next != null;
 	}
 	
-	public OwlClass next() {
-		OwlClass res = factory.create(next);
+	public AbstractOwlClass next() {
+		AbstractOwlClass res = factory.create(next);
 		skip();
 		return res;
 	}

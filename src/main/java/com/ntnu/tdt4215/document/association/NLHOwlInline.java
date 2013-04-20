@@ -1,8 +1,10 @@
-package com.ntnu.tdt4215.document;
+package com.ntnu.tdt4215.document.association;
 
 import java.util.Collection;
 
 import org.apache.lucene.document.Field;
+
+import com.ntnu.tdt4215.document.ScoredDocument;
 
 /**
  * A document that holds the ICD10 entries that are the most relevant to the chapter

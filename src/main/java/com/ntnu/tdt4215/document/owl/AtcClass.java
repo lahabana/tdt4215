@@ -1,11 +1,11 @@
-package com.ntnu.tdt4215.document;
+package com.ntnu.tdt4215.document.owl;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 
 import com.hp.hpl.jena.ontology.OntClass;
 
-public class AtcClass extends OwlClass {
+public class AtcClass extends AbstractOwlClass {
 
 	String content = "";
 	static FieldType ftContent = new FieldType();
@@ -20,7 +20,6 @@ public class AtcClass extends OwlClass {
 		extractInfo(ontClass);
 		setId();
 		document.add(new Field("content", content, ftContent));
-		System.out.println(this);
 	}
 
 	@Override

@@ -1,10 +1,13 @@
-package com.ntnu.tdt4215.document;
+package com.ntnu.tdt4215.document.association;
 
 import java.util.Collection;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
+
+import com.ntnu.tdt4215.document.IndexableDocument;
+import com.ntnu.tdt4215.document.ScoredDocument;
 
 public abstract class AbstractNLHIcd10 implements IndexableDocument {
 	protected Document document = new Document();

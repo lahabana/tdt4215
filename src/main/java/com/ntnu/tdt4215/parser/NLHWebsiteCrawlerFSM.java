@@ -13,8 +13,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.ntnu.tdt4215.document.NLHChapter;
-import com.ntnu.tdt4215.document.factory.NLHFactory;
+import com.ntnu.tdt4215.document.NLHChapter.NLHChapter;
+import com.ntnu.tdt4215.document.NLHChapter.NLHFactory;
 
 public class NLHWebsiteCrawlerFSM implements IndexingFSM {
 

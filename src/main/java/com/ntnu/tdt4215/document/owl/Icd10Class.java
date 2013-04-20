@@ -1,4 +1,4 @@
-package com.ntnu.tdt4215.document;
+package com.ntnu.tdt4215.document.owl;
 
 
 import org.apache.lucene.document.Field;
@@ -15,7 +15,7 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  * @author charlymolter
  *
  */
-public class Icd10Class extends OwlClass {
+public class Icd10Class extends AbstractOwlClass {
 
 	String content = "";
 	static String ns = "http://research.idi.ntnu.no/hilab/ehr/ontologies/icd10no.owl#";
@@ -33,7 +33,6 @@ public class Icd10Class extends OwlClass {
 		extractInfo(ontClass);
 		setId();
 		document.add(new Field("content", content, ftContent));
-		System.out.println(this);
 	}
 
 	@Override

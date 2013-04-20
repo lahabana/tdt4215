@@ -1,6 +1,5 @@
-package com.ntnu.tdt4215.document.factory;
+package com.ntnu.tdt4215.document.NLHChapter;
 
-import com.ntnu.tdt4215.document.NLHChapter;
 
 public class NLHWebsiteFactory implements NLHFactory {
 

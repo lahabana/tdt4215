@@ -3,7 +3,7 @@ package com.ntnu.tdt4215.parser;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import com.ntnu.tdt4215.document.NLHChapter;
+import com.ntnu.tdt4215.document.NLHChapter.NLHChapter;
 
 /**
  * This is an example FSM in order to show how to use it. It also enables testing

@@ -1,9 +1,7 @@
-package com.ntnu.tdt4215.document.factory;
+package com.ntnu.tdt4215.document.association;
 
 import java.util.Collection;
 
-import com.ntnu.tdt4215.document.AbstractNLHIcd10;
-import com.ntnu.tdt4215.document.NLHOwlMultipleFields;
 import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.query.MultifieldQueryFactory;
 import com.ntnu.tdt4215.query.QueryFactory;
