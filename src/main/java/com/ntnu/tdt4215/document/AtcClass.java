@@ -1,35 +1,31 @@
 package com.ntnu.tdt4215.document;
 
-import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 
 import com.hp.hpl.jena.ontology.OntClass;
 
-public class AtcClass implements OwlClass {
+public class AtcClass extends OwlClass {
 
 	String content = "";
-	String id = "";
-	Document document = new Document();
-	static FieldType ftId = new FieldType();
 	static FieldType ftContent = new FieldType();
 	static {
-		ftId.setStored(true);
-		ftId.setTokenized(false);
-		ftId.setIndexed(false);
 		ftContent.setStored(true);
 		ftContent.setTokenized(true);
 		ftContent.setIndexed(true);
 	}
 
 	public AtcClass(OntClass ontClass) {
+		super(ontClass);
 		extractInfo(ontClass);
-		id = ontClass.getLocalName();
 		setId();
-	    setContent();
+		document.add(new Field("content", content, ftContent));
+		System.out.println(this);
 	}
 
+	@Override
 	public void extractInfo(OntClass ontClass) {
+		id = ontClass.getLocalName();
 	    // get the title
 		String label = ontClass.getLabel("no");
 		content += " " + (label == null ? "" : label);
@@ -47,18 +43,7 @@ public class AtcClass implements OwlClass {
 	    }
 	}
 
-	public Document getDocument() {
-		return document;
-	}
-
-	protected void setContent() {
-		document.add(new Field("content", content, ftContent));
-	}
-
-	protected void setId() {
-		document.add(new Field("id", id, ftId));
-	}
-
+	@Override
 	public String toString() {
 		return "{id:\"" + id + "\", content:\"" + content + "\"}";	
 	}

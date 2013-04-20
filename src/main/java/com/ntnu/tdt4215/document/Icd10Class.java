@@ -1,7 +1,6 @@
 package com.ntnu.tdt4215.document;
 
 
-import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 
@@ -16,31 +15,28 @@ import com.hp.hpl.jena.vocabulary.RDFS;
  * @author charlymolter
  *
  */
-public class Icd10Class implements OwlClass {
+public class Icd10Class extends OwlClass {
 
 	String content = "";
-	String id = "";
-	Document document = new Document();
 	static String ns = "http://research.idi.ntnu.no/hilab/ehr/ontologies/icd10no.owl#";
 	static Property code_compacted = ResourceFactory.createProperty(ns + "code_compacted");
 	static Property synonym = ResourceFactory.createProperty(ns + "synonym");
-	static FieldType ftId = new FieldType();
 	static FieldType ftContent = new FieldType();
 	static {
-		ftId.setStored(true);
-		ftId.setTokenized(false);
-		ftId.setIndexed(false);
 		ftContent.setStored(true);
 		ftContent.setTokenized(true);
 		ftContent.setIndexed(true);
 	}
 	
 	public Icd10Class(OntClass ontClass) {
+		super(ontClass);
 		extractInfo(ontClass);
-	    setContent();
-	    setId();
+		setId();
+		document.add(new Field("content", content, ftContent));
+		System.out.println(this);
 	}
 
+	@Override
 	public void extractInfo(OntClass ontClass) {
 	    Statement codeStmt = ontClass.getProperty(code_compacted);
 	    if (codeStmt != null) {
@@ -68,19 +64,8 @@ public class Icd10Class implements OwlClass {
 		    }
 	    }
 	}
-		
-	public Document getDocument() {
-		return document;
-	}
-	
-	protected void setContent() {
-		document.add(new Field("content", content, ftContent));
-	}
-	
-	protected void setId() {
-		document.add(new Field("id", id, ftId));
-	}
 
+	@Override
 	public String toString() {
 		return "{id:\"" + id + "\", content:\"" + content + "\"}";
 		
