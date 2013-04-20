@@ -10,7 +10,6 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.document.NLHChapter.NLHChapter;
 import com.ntnu.tdt4215.document.NLHChapter.NLHFactory;
 import com.ntnu.tdt4215.document.NLHChapter.NLHWebsiteFactory;
@@ -19,6 +18,7 @@ import com.ntnu.tdt4215.document.association.NLHOwlInlineFactory;
 import com.ntnu.tdt4215.document.owl.AtcFactory;
 import com.ntnu.tdt4215.document.owl.Icd10Factory;
 import com.ntnu.tdt4215.index.MultipleQueryPolicy;
+import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.index.SentenceCountQueryPolicy;
 import com.ntnu.tdt4215.index.manager.MergingManager;
 import com.ntnu.tdt4215.index.manager.SimpleManager;

@@ -1,4 +1,4 @@
-package com.ntnu.tdt4215.document;
+package com.ntnu.tdt4215.index;
 
 import org.apache.lucene.document.Document;
 

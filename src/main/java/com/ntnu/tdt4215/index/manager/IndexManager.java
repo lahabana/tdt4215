@@ -8,7 +8,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryparser.classic.ParseException;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 
 public interface IndexManager {

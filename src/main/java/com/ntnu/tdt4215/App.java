@@ -3,8 +3,8 @@ package com.ntnu.tdt4215;
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.gui.SearchWindow;
+import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.searchEngine.SearchEngine;
 import com.ntnu.tdt4215.searchEngine.SeparateIndexSE;
 import com.ntnu.tdt4215.searchEngine.SingleIndexSE;

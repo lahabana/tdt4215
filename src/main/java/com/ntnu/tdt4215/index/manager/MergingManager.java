@@ -11,8 +11,8 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopScoreDocCollector;
 import org.apache.lucene.store.Directory;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.index.MultipleQueryPolicy;
+import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.query.QueryFactory;
 
 public class MergingManager extends LuceneAbstractManager {

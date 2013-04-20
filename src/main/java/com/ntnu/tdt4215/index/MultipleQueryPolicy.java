@@ -5,7 +5,6 @@ import java.util.Collection;
 
 import org.apache.lucene.document.Document;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
 
 /**
  * The goal of this interface is to deal with queries that should

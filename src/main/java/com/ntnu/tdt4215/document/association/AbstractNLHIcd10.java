@@ -7,7 +7,7 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 
 import com.ntnu.tdt4215.document.IndexableDocument;
-import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.index.ScoredDocument;
 
 public abstract class AbstractNLHIcd10 implements IndexableDocument {
 	protected Document document = new Document();

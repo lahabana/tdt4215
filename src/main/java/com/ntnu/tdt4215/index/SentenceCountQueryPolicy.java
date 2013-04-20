@@ -8,7 +8,6 @@ import java.util.Hashtable;
 
 import org.apache.lucene.document.Document;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
 
 /**
  * A MultipleQueryPolicy that will split the query in separated sentences

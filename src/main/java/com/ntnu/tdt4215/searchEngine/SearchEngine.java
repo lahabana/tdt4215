@@ -8,7 +8,7 @@ import java.util.Hashtable;
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.index.manager.IndexManager;
 import com.ntnu.tdt4215.parser.IndexingFSM;
 

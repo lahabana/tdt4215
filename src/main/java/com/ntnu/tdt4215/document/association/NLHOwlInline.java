@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import org.apache.lucene.document.Field;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.index.ScoredDocument;
 
 /**
  * A document that holds the ICD10 entries that are the most relevant to the chapter

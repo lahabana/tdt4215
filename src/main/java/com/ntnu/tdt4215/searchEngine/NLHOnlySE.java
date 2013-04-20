@@ -10,8 +10,8 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
 import com.ntnu.tdt4215.document.NLHChapter.NLHWebsiteFactory;
+import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.index.manager.SimpleManager;
 import com.ntnu.tdt4215.parser.NLHWebsiteCrawlerFSM;
 import com.ntnu.tdt4215.query.NorwegianQueryFactory;

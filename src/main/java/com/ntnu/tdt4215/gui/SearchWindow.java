@@ -16,7 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import com.ntnu.tdt4215.document.ScoredDocument;
+import com.ntnu.tdt4215.index.ScoredDocument;
 import com.ntnu.tdt4215.searchEngine.SearchEngine;
 
 public class SearchWindow extends JFrame {
