@@ -10,7 +10,7 @@ import com.ntnu.tdt4215.index.ScoredDocument;
  * A document that holds the ICD10 entries that are the most relevant to the chapter
  * and creates a lucene document with each NLH chapter as a different field
  */
-public class NLHOwlMultipleFields extends AbstractNLHIcd10 {
+public class NLHOwlMultipleFields extends AbstractNLHOwl {
 	public static boolean withBoost = false;
 	
 	public NLHOwlMultipleFields(String title, Collection<ScoredDocument> content) {

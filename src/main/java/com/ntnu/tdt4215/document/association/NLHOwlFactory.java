@@ -13,7 +13,7 @@ public interface NLHOwlFactory {
 	 * @param content
 	 * @return
 	 */
-	public AbstractNLHIcd10 create(String title, Collection<ScoredDocument> content);
+	public AbstractNLHOwl create(String title, Collection<ScoredDocument> content);
 	
 	/**
 	 * Returns the queryFactory adapted to the documents this factory creates

@@ -11,7 +11,7 @@ import com.ntnu.tdt4215.index.ScoredDocument;
  * and creates a lucene document with each NLH chapter in a single field and repeated
  * depending on its score
  */
-public class NLHOwlInline extends AbstractNLHIcd10 {
+public class NLHOwlInline extends AbstractNLHOwl {
 	
 	public NLHOwlInline(String title, Collection<ScoredDocument> content) {
 		super(title, content);

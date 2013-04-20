@@ -11,7 +11,7 @@ import com.ntnu.tdt4215.index.queryFactory.SimpleQueryFactory;
 public class NLHOwlInlineFactory implements NLHOwlFactory {
 	QueryFactory qpf = new SimpleQueryFactory(new WhitespaceAnalyzer(QueryFactory.VERSION));
 	
-	public AbstractNLHIcd10 create(String title, Collection<ScoredDocument> content) {
+	public AbstractNLHOwl create(String title, Collection<ScoredDocument> content) {
 		return new NLHOwlInline(title, content);
 	}
 

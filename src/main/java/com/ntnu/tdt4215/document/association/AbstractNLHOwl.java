@@ -9,7 +9,7 @@ import org.apache.lucene.document.FieldType;
 import com.ntnu.tdt4215.document.IndexableDocument;
 import com.ntnu.tdt4215.index.ScoredDocument;
 
-public abstract class AbstractNLHIcd10 implements IndexableDocument {
+public abstract class AbstractNLHOwl implements IndexableDocument {
 	protected Document document = new Document();
 	String title;
 	String content;
@@ -25,7 +25,7 @@ public abstract class AbstractNLHIcd10 implements IndexableDocument {
 		ftContent.setIndexed(true);
 	}
 	
-	public AbstractNLHIcd10(String title, Collection<ScoredDocument> content) {
+	public AbstractNLHOwl(String title, Collection<ScoredDocument> content) {
 		document = new Document();
 		setTitle(title);
 		setContent(content);
